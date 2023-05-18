@@ -1,0 +1,120 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  // Main info
+  id       String @id @default(uuid())
+  username String @unique
+  email    String @unique
+  password String
+
+  // Serevrs where user is a member
+  joinedServers Server[] @relation(name: "joinServers")
+
+  // Servers that user has created
+  createdServers Server[] @relation(name: "createServers")
+
+  // Categories that user has created
+  createdCategories Category[]
+
+  // Chanels that user has created
+  createdChanels Chanel[]
+
+  // Messages writed by user
+  messages Message[]
+
+  // Time stamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Server {
+  // Main info
+  id    String  @id @default(uuid())
+  name  String  @unique
+  image String?
+
+  // Categories created for server
+  // by server owner
+  categories Category[]
+
+  // Members of the server
+  members User[] @relation(name: "joinServers")
+
+  // Server owner
+  createdBy User   @relation(name: "createServers", fields: [creatorId], references: [id])
+  creatorId String
+
+  // Time stamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  // Main info
+  id   String @id @default(uuid())
+  name String
+
+  // Server where category is created
+  server   Server @relation(fields: [serverId], references: [id])
+  serverId String
+
+  // Chanels included into the category 
+  chanels Chanel[]
+
+  // User who create category
+  createdBy User   @relation(fields: [creatorId], references: [id])
+  creatorId String
+
+  // Time stamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Chanel {
+  // Main info
+  id   String @id @default(uuid())
+  name String
+
+  // Category where chanel is containing
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String
+
+  // Category author
+  createdBy User   @relation(fields: [creatorId], references: [id])
+  creatorId String
+
+  // Messages, writed in chanel
+  messages Message[]
+
+  // Time stamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Message {
+  // Main info
+  id      String @id @default(uuid())
+  content String
+
+  // Chanel where message was writed
+  chanel   Chanel @relation(fields: [chanelId], references: [id])
+  chanelId String
+
+  // User, who writed message
+  createdBy User   @relation(fields: [creatorId], references: [id])
+  creatorId String
+
+  // Time stamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
