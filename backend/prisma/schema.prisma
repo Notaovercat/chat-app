@@ -18,7 +18,7 @@ model User {
   password String
 
   // Serevrs where user is a member
-  joinedServers Server[] @relation(name: "joinServers")
+  joinedServers ServerJoin[] @relation(name: "joinServers")
 
   // Servers that user has created
   createdServers Server[] @relation(name: "createServers")
@@ -48,13 +48,26 @@ model Server {
   categories Category[]
 
   // Members of the server
-  members User[] @relation(name: "joinServers")
+  members ServerJoin[]
 
   // Server owner
   createdBy User   @relation(name: "createServers", fields: [creatorId], references: [id])
   creatorId String
 
   // Time stamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ServerJoin {
+  id       String @id @default(uuid())
+  user     User   @relation(name: "joinServers", fields: [userId], references: [id])
+  userId   String
+  server   Server @relation(fields: [serverId], references: [id])
+  serverId String
+
+  joinedAt DateTime @default(now())
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

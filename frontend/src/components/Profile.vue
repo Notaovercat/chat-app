@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { useProfileStore } from "@/stores/profile";
 import { useAuthStore } from "@/stores/auth";
-import { useUserStore } from "@/stores/user";
+import { useServerStore } from "@/stores/servers";
 import type { Profile } from "@/types/user.type";
 import ServerCard from "@/components/ServerCard.vue";
+import type { Server } from "@/types/server.type";
 
 interface ProfileProps {
   userId: string;
@@ -12,13 +13,14 @@ interface ProfileProps {
 
 const props = defineProps<ProfileProps>();
 const profileStore = useProfileStore();
-const userStore = useUserStore();
 const authStore = useAuthStore();
+const serverStore = useServerStore();
 
 const userId = props.userId;
 const isUser = props.isUser;
 
-const user: Profile = await userStore.getUser(userId);
+const user: Profile = await profileStore.getUser(userId);
+// const servers: Server[] = await serverStore.getJoinedServers()
 </script>
 
 <template>
@@ -50,16 +52,9 @@ const user: Profile = await userStore.getUser(userId);
         <div
           class="mt-2 flex h-[200px] w-[95%] flex-wrap overflow-auto rounded-xl bg-slate-300 px-4 py-2"
         >
-          <ServerCard
-            v-if="user.joinedServers.length"
-            v-for="server of user.joinedServers"
-            :server="server"
-          />
-          <div v-else>
-            <p class="select-none text-3xl font-bold text-slate-400">
-              No Servers...
-            </p>
-          </div>
+          <p class="select-none text-3xl font-bold text-slate-400">
+            User has not provided info
+          </p>
         </div>
 
         <!-- LOGOUT -->

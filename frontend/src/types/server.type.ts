@@ -18,6 +18,7 @@ export interface Server {
   id: string;
   name: string;
   image?: string;
+  creatorId: string;
   // categories: Category[];
   // members: User[];
   // createdAt: Date;

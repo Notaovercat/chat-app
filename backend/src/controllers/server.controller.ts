@@ -18,17 +18,14 @@ export const createServer = async (req: Request, res: Response) => {
       data: {
         name: inputServer.name,
         createdBy: { connect: { id: user.id } },
-        members: { connect: { id: user.id } },
       },
     });
 
     // JOIN USER TO HIS SERVER
-    await prisma.user.update({
-      where: { id: user.id },
+    await prisma.serverJoin.create({
       data: {
-        joinedServers: {
-          connect: { id: createdServer.id },
-        },
+        user: { connect: { id: user.id } },
+        server: { connect: { id: createdServer.id } },
       },
     });
 
@@ -46,13 +43,7 @@ export const createServer = async (req: Request, res: Response) => {
 // GET ALL SERVERS
 export const getServers = async (req: Request, res: Response) => {
   try {
-    const foundServers: Server[] = await prisma.server.findMany({
-      // include: {
-      //   members: {
-      //     select: { username: true },
-      //   },
-      // },
-    });
+    const foundServers: Server[] = await prisma.server.findMany();
 
     return res.status(200).json({
       servers: foundServers,
@@ -88,21 +79,11 @@ export const joinToServer = async (req: Request, res: Response) => {
     const userId = user.id;
     const serverId = req.body["serverId"];
 
-    // JOIN USER TO HIS SERVER
-    await prisma.user.update({
-      where: { id: user.id },
+    // JOIN USER TO SERVER
+    await prisma.serverJoin.create({
       data: {
-        joinedServers: {
-          connect: { id: serverId },
-        },
-      },
-    });
-
-    // ADD USER TO MEMBER LIST
-    await prisma.server.update({
-      where: { id: serverId },
-      data: {
-        members: { connect: { id: userId } },
+        server: { connect: { id: serverId } },
+        user: { connect: { id: userId } },
       },
     });
   } catch (err) {
@@ -117,22 +98,37 @@ export const getJoinedServers = async (req: Request, res: Response) => {
     const user = req.user as User;
     const userId = user.id;
 
-    const foundJoinedServers = await prisma.server.findMany({
-      where: {
-        members: {
-          some: {
-            id: userId,
-          },
-        },
-      },
+    // const foundJoinedServers = await prisma.server.findMany({
+    //   where: {
+    //     members: {
+    //       some: { userId },
+    //     },
+    //   },
+    //   select: {
+    //     id: true,
+    //     name: true,
+    //     image: true,
+    //   },
+    //   orderBy: {members:{}},
+    // });
+
+    const foundJoinedServers = await prisma.serverJoin.findMany({
+      where: { userId: userId },
       select: {
-        id: true,
-        name: true,
-        image: true,
+        server: true,
       },
     });
+
+    // const servers
+    const servers: Server[] = foundJoinedServers.reduce(
+      (acc: any, { server }) => {
+        acc[server.id] = server;
+        return acc;
+      },
+      {}
+    );
     return res.status(200).json({
-      servers: foundJoinedServers,
+      servers,
     });
   } catch (err) {
     const { errorMessage, code } = errorHandler(err);

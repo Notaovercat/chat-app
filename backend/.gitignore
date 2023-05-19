@@ -1,3 +1,29 @@
-node_modules
-# Keep environment variables out of version control
+# Ignore node_modules directory
+node_modules/
+
+# Ignore built output
+dist/
+
+# Ignore environment variables file (if used)
 .env
+
+# Ignore TypeScript compilation artifacts
+*.js
+*.js.map
+
+# Ignore Prisma artifacts
+prisma/migrations/
+!prisma/dev.db
+
+# Ignore logs
+logs/
+
+# Ignore editor-specific files
+.vscode/
+.idea/
+*.sublime-*
+*.swp
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db

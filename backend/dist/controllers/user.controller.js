@@ -22,11 +22,11 @@ const getUserProfile = (req, res) => __awaiter(void 0, void 0, void 0, function*
                 id: true,
                 username: true,
                 email: true,
-                joinedServers: true,
                 createdAt: true,
                 updatedAt: true,
             },
         });
+        // console.log(userProfile);
         return res.status(200).json({ user: userProfile });
     }
     catch (err) {
@@ -35,3 +35,13 @@ const getUserProfile = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.getUserProfile = getUserProfile;
+// Check if user is server ownmer
+// export const ifUserServCreator = async (req: Request, res: Response) => {
+//   try {
+//     const user = req.user as User;
+//     const serverId
+//   } catch (err) {
+//     const { errorMessage, code } = errorHandler(err);
+//     return res.status(code).json({ message: errorMessage });
+//   }
+// };

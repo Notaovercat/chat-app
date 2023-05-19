@@ -25,16 +25,13 @@ const createServer = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             data: {
                 name: inputServer.name,
                 createdBy: { connect: { id: user.id } },
-                members: { connect: { id: user.id } },
             },
         });
         // JOIN USER TO HIS SERVER
-        yield prisma.user.update({
-            where: { id: user.id },
+        yield prisma.serverJoin.create({
             data: {
-                joinedServers: {
-                    connect: { id: createdServer.id },
-                },
+                user: { connect: { id: user.id } },
+                server: { connect: { id: createdServer.id } },
             },
         });
         // SEND SUCCESSFUL STATUS
@@ -52,13 +49,7 @@ exports.createServer = createServer;
 // GET ALL SERVERS
 const getServers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const foundServers = yield prisma.server.findMany({
-        // include: {
-        //   members: {
-        //     select: { username: true },
-        //   },
-        // },
-        });
+        const foundServers = yield prisma.server.findMany();
         return res.status(200).json({
             servers: foundServers,
         });
@@ -92,20 +83,11 @@ const joinToServer = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         const user = req.user;
         const userId = user.id;
         const serverId = req.body["serverId"];
-        // JOIN USER TO HIS SERVER
-        yield prisma.user.update({
-            where: { id: user.id },
+        // JOIN USER TO SERVER
+        yield prisma.serverJoin.create({
             data: {
-                joinedServers: {
-                    connect: { id: serverId },
-                },
-            },
-        });
-        // ADD USER TO MEMBER LIST
-        yield prisma.server.update({
-            where: { id: serverId },
-            data: {
-                members: { connect: { id: userId } },
+                server: { connect: { id: serverId } },
+                user: { connect: { id: userId } },
             },
         });
     }
@@ -120,22 +102,32 @@ const getJoinedServers = (req, res) => __awaiter(void 0, void 0, void 0, functio
     try {
         const user = req.user;
         const userId = user.id;
-        const foundJoinedServers = yield prisma.server.findMany({
-            where: {
-                members: {
-                    some: {
-                        id: userId,
-                    },
-                },
-            },
+        // const foundJoinedServers = await prisma.server.findMany({
+        //   where: {
+        //     members: {
+        //       some: { userId },
+        //     },
+        //   },
+        //   select: {
+        //     id: true,
+        //     name: true,
+        //     image: true,
+        //   },
+        //   orderBy: {members:{}},
+        // });
+        const foundJoinedServers = yield prisma.serverJoin.findMany({
+            where: { userId: userId },
             select: {
-                id: true,
-                name: true,
-                image: true,
+                server: true,
             },
         });
+        // const servers
+        const servers = foundJoinedServers.reduce((acc, { server }) => {
+            acc[server.id] = server;
+            return acc;
+        }, {});
         return res.status(200).json({
-            servers: foundJoinedServers,
+            servers,
         });
     }
     catch (err) {

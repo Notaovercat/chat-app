@@ -24,13 +24,11 @@ const onCreate = async () => {
 </script>
 
 <template>
-  <div class="flex items-center justify-between">
-    <div
-      class="flex h-[44px] w-[44px] cursor-pointer items-center justify-center rounded-full bg-blue-900 text-center shadow-md transition-all duration-300 ease-in-out hover:bg-black hover:shadow-xl"
-      @click="showModal = true"
-    >
-      <span class="select-none text-7xl text-white">+</span>
-    </div>
+  <div
+    class="flex h-[44px] w-[44px] cursor-pointer rounded-full bg-blue-900 shadow-md transition-all duration-300 ease-in-out hover:bg-black hover:shadow-xl"
+    @click="showModal = true"
+  >
+    <span class="mx-auto select-none text-4xl text-white">+</span>
   </div>
 
   <div class="fixed inset-0 bg-black bg-opacity-40" v-if="showModal">

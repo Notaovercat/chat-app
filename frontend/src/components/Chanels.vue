@@ -16,12 +16,19 @@ const categories: Ref<Category[]> = ref([]);
 
 const serverStore = useServerStore();
 const server = ref<Server>();
+const isUserOwner = ref(false);
 
 // const chanStore = useChanStore();
 // const chanels: Ref<Chanel[]> = ref([]);
 
 const loadComponent = async () => {
-  server.value = await serverStore.getServerById(route.params.id as string);
+  server.value = (await serverStore.getServerById(
+    route.params.id as string
+  )) as Server;
+  isUserOwner.value = serverStore.checkIfUserServOwner(
+    server.value,
+    localStorage.getItem("userId") as string
+  );
   categories.value = await catsStore.getCatsByServer(route.params.id as string);
 };
 
@@ -35,13 +42,16 @@ onMounted(async () => loadComponent());
 
 <template>
   <div
-    class="fixed bottom-0 left-0 top-0 h-full w-52 flex-col overflow-visible bg-blue-800 pl-2 shadow-xl"
+    class="fixed bottom-0 left-0 top-0 h-full w-52 flex-col overflow-visible bg-blue-800 shadow-xl"
   >
-    <div class="text-center text-2xl font-bold text-white">
+    <div class="pl-2 text-center text-2xl font-bold text-white">
       <span>{{ server?.name }}</span>
     </div>
 
-    <div class="mt-2 font-bold text-slate-400" v-for="category of categories">
+    <div
+      class="mt-2 pl-2 font-bold text-slate-400"
+      v-for="category of categories"
+    >
       <span
         class="cursor-pointer select-none text-white transition-all duration-100 hover:text-blue-100"
       >
@@ -50,6 +60,17 @@ onMounted(async () => loadComponent());
       <div v-for="chanel of category.chanels">
         <Chanel :chanel="chanel" />
       </div>
+    </div>
+
+    <div
+      class="mx-2 mt-2 flex justify-center rounded-lg bg-blue-400 font-bold text-slate-400"
+      v-if="isUserOwner"
+    >
+      <span
+        class="cursor-pointer select-none text-white transition-all duration-100 hover:text-blue-100"
+      >
+        Create Category +
+      </span>
     </div>
   </div>
 </template>

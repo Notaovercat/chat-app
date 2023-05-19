@@ -89,11 +89,16 @@ export const useServerStore = defineStore("server", () => {
     }
   }
 
+  function checkIfUserServOwner(server: Server, userId: string) {
+    return server.creatorId === userId ? true : false;
+  }
+
   return {
     getJoinedServers,
     loadingState,
     errorMessage,
     getServerById,
     createServer,
+    checkIfUserServOwner,
   };
 });

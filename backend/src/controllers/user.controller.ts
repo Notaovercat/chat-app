@@ -14,15 +14,25 @@ export const getUserProfile = async (req: Request, res: Response) => {
         id: true,
         username: true,
         email: true,
-        joinedServers: true,
         createdAt: true,
         updatedAt: true,
       },
     });
-
+    // console.log(userProfile);
     return res.status(200).json({ user: userProfile });
   } catch (err) {
     const { errorMessage, code } = errorHandler(err);
     return res.status(code).json({ message: errorMessage });
   }
 };
+
+// Check if user is server ownmer
+// export const ifUserServCreator = async (req: Request, res: Response) => {
+//   try {
+//     const user = req.user as User;
+//     const serverId
+//   } catch (err) {
+//     const { errorMessage, code } = errorHandler(err);
+//     return res.status(code).json({ message: errorMessage });
+//   }
+// };
