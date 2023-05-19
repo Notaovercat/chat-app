@@ -1,14 +1,16 @@
 <script setup lang="ts">
+import ServerSideIcon from "@/components/ServerSideIcon.vue";
+import UserButton from "@/components/UserButton.vue";
+import CreateServer from "@/components/CreateServer.vue";
 import type { Server } from "@/types/server.type";
-import ServerSideIcon from "./ServerSideIcon.vue";
-import UserButton from "./UserButton.vue";
 import { useProfileStore } from "@/stores/profile";
 import { useServerStore } from "@/stores/servers";
 
 const profileStore = useProfileStore();
 const serverStore = useServerStore();
 
-const joinedServers: Server[] = await serverStore.getJoinedServers();
+const joinedServers: Server[] =
+  (await serverStore.getJoinedServers()) as Server[];
 </script>
 
 <template>
@@ -23,6 +25,9 @@ const joinedServers: Server[] = await serverStore.getJoinedServers();
       <!-- Button for servers -->
       <li v-for="server of joinedServers">
         <ServerSideIcon :server="server" />
+      </li>
+      <li>
+        <CreateServer />
       </li>
     </ul>
   </div>

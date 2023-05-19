@@ -8,11 +8,11 @@ export const createServerSchema = z
   })
   .strict();
 
-export type CreateServer = z.infer<typeof createServerSchema>;
+export type CreateServerInput = z.infer<typeof createServerSchema>;
 
 export const updateServerSchema = createServerSchema.partial();
 
-export type UpdateServer = z.infer<typeof updateServerSchema>;
+export type UpdateServerInput = z.infer<typeof updateServerSchema>;
 
 export interface Server {
   id: string;

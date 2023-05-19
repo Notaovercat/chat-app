@@ -39,6 +39,7 @@ const options = {
 const errorHandler = (error) => {
     let errorMessage;
     let code;
+    console.log(error);
     if (error instanceof library_1.PrismaClientKnownRequestError) {
         errorMessage = prismaErrorHandler(error);
         code = 400;

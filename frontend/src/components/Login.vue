@@ -70,6 +70,11 @@ const onSignup = () => {
   )
     return;
 
+  //   console.log({
+  //   email: userCred.email,
+  //   username: userCred.username,
+  //   password: userCred.password,
+  // })
   authStore.handleRegistration({
     email: userCred.email,
     username: userCred.username,

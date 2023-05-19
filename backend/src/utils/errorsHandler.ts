@@ -45,7 +45,7 @@ export const errorHandler = (
 } => {
   let errorMessage: string;
   let code: number;
-
+  console.log(error);
   if (error instanceof PrismaClientKnownRequestError) {
     errorMessage = prismaErrorHandler(error);
     code = 400;
