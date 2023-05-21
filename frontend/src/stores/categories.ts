@@ -1,4 +1,4 @@
-import type { Category } from "@/types/category.type";
+import type { Category, CreateCategoryInput } from "@/types/category.type";
 import axios from "axios";
 import { defineStore } from "pinia";
 import { ref } from "vue";
@@ -31,5 +31,36 @@ export const useCatsStore = defineStore("category", () => {
     return categories;
   }
 
-  return { getCatsByServer };
+  async function createCateory(
+    categoryInput: CreateCategoryInput
+  ): Promise<Category | undefined> {
+    try {
+      // LOADING TRUE
+      loadingState.value = true;
+
+      // CLEAR ERROR MESSAGE
+      errorMessage.value = "";
+
+      // MAKE A REQUEST
+      const token = localStorage.getItem("jwt");
+      const response = await axios.post(
+        `${apiUrl}/categories/`,
+        categoryInput,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // LOADING FALSE
+      loadingState.value = false;
+
+      return response.data.server as Category;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  return { getCatsByServer, createCateory, loadingState };
 });

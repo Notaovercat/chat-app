@@ -1,5 +1,5 @@
 import z from "zod";
-import type { Chanel } from "./channel.type";
+import type { Chanel } from "./chanel.type";
 
 export const createCategorySchema = z
   .object({
@@ -8,11 +8,11 @@ export const createCategorySchema = z
   })
   .strict();
 
-export type CreateCategory = z.infer<typeof createCategorySchema>;
+export type CreateCategoryInput = z.infer<typeof createCategorySchema>;
 
 export const updateCategorySchema = createCategorySchema.partial();
 
-export type UpdateCategory = z.infer<typeof updateCategorySchema>;
+export type UpdateCategoryInput = z.infer<typeof updateCategorySchema>;
 
 export interface Category {
   id: string;

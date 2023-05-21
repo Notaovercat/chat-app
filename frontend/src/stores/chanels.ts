@@ -1,4 +1,4 @@
-import type { Chanel } from "@/types/channel.type";
+import type { Chanel, CreateChanel } from "@/types/chanel.type";
 import axios from "axios";
 import { defineStore } from "pinia";
 import { ref } from "vue";
@@ -31,5 +31,30 @@ export const useChanStore = defineStore("chanel", () => {
     return chanels;
   }
 
-  return { getChanelsByCat, loadingState, errorMessage };
+  async function createChanel(chanelInput: CreateChanel) {
+    try {
+      // LOADING TRUE
+      loadingState.value = true;
+
+      // CLEAR ERROR MESSAGE
+      errorMessage.value = "";
+
+      // MAKE A REQUEST
+      const token = localStorage.getItem("jwt");
+      const response = await axios.post(`${apiUrl}/chanels/`, chanelInput, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // LOADING FALSE
+      loadingState.value = false;
+
+      return response.data.server as Chanel;
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  return { createChanel, getChanelsByCat, loadingState, errorMessage };
 });

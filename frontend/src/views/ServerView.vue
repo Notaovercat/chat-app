@@ -5,7 +5,8 @@ import SideBar from "@/components/SideBar.vue";
 
 <template>
   <SideBar />
-  <main class="flex min-h-screen w-screen bg-blue-50">
+  <main class="min-h-screen bg-blue-50">
     <Chanels class="z-30 ml-[4rem]" />
+    <RouterView name="chat" />
   </main>
 </template>

@@ -7,6 +7,8 @@ export const useServerStore = defineStore("server", () => {
   const loadingState = ref(false);
   const apiUrl = import.meta.env.VITE_API_URL;
   const errorMessage = ref("");
+  const currentServerId = ref("");
+  const currentServerName = ref("");
 
   async function getJoinedServers(): Promise<Server[] | undefined> {
     try {
@@ -89,8 +91,8 @@ export const useServerStore = defineStore("server", () => {
     }
   }
 
-  function checkIfUserServOwner(server: Server, userId: string) {
-    return server.creatorId === userId ? true : false;
+  function checkIfUserServOwner(creatorId: string, userId: string) {
+    return creatorId === userId ? true : false;
   }
 
   return {
@@ -100,5 +102,7 @@ export const useServerStore = defineStore("server", () => {
     getServerById,
     createServer,
     checkIfUserServOwner,
+    currentServerId,
+    currentServerName,
   };
 });

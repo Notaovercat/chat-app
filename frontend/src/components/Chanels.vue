@@ -2,12 +2,12 @@
 import { useCatsStore } from "@/stores/categories";
 import { useServerStore } from "@/stores/servers";
 import type { Category } from "@/types/category.type";
-// import { useChanStore } from "@/stores/chanels";
-// import type { Chanel } from "@/types/channel.type";
 import { ref, watch, type Ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import Chanel from "./Chanel.vue";
 import type { Server } from "@/types/server.type";
+import CreateCategory from "./CreateCategory.vue";
+import CreateChanel from "./CreateChanel.vue";
+import Chanel from "./Chanel.vue";
 
 const route = useRoute();
 
@@ -15,29 +15,38 @@ const catsStore = useCatsStore();
 const categories: Ref<Category[]> = ref([]);
 
 const serverStore = useServerStore();
-const server = ref<Server>();
+const server = ref<Server | undefined>();
 const isUserOwner = ref(false);
 
 // const chanStore = useChanStore();
 // const chanels: Ref<Chanel[]> = ref([]);
 
 const loadComponent = async () => {
-  server.value = (await serverStore.getServerById(
-    route.params.id as string
-  )) as Server;
+  catsStore.loadingState = true;
+  categories.value = [];
+  serverStore.currentServerId = route.params.serverId as string;
+
+  server.value = await serverStore.getServerById(
+    route.params.serverId as string
+  );
+  if (!server.value) throw new Error();
+  serverStore.currentServerName = server.value.name;
   isUserOwner.value = serverStore.checkIfUserServOwner(
-    server.value,
+    server.value.creatorId,
     localStorage.getItem("userId") as string
   );
-  categories.value = await catsStore.getCatsByServer(route.params.id as string);
+  categories.value = await catsStore.getCatsByServer(
+    route.params.serverId as string
+  );
+  catsStore.loadingState = false;
 };
 
 watch(
-  () => route.params.id as string,
-  async () => loadComponent()
+  () => route.params.serverId,
+  async () => await loadComponent()
 );
 
-onMounted(async () => loadComponent());
+onMounted(async () => await loadComponent());
 </script>
 
 <template>
@@ -50,6 +59,7 @@ onMounted(async () => loadComponent());
 
     <div
       class="mt-2 pl-2 font-bold text-slate-400"
+      v-if="!catsStore.loadingState"
       v-for="category of categories"
     >
       <span
@@ -57,20 +67,13 @@ onMounted(async () => loadComponent());
       >
         {{ category.name }}
       </span>
+      <CreateChanel :categoryId="category.id" />
       <div v-for="chanel of category.chanels">
-        <Chanel :chanel="chanel" />
+        <Chanel :serverId="serverStore.currentServerId" :chanel="chanel" />
       </div>
     </div>
 
-    <div
-      class="mx-2 mt-2 flex justify-center rounded-lg bg-blue-400 font-bold text-slate-400"
-      v-if="isUserOwner"
-    >
-      <span
-        class="cursor-pointer select-none text-white transition-all duration-100 hover:text-blue-100"
-      >
-        Create Category +
-      </span>
-    </div>
+    <div v-else>Loading...</div>
+    <CreateCategory v-if="isUserOwner" />
   </div>
 </template>
