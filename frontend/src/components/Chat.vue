@@ -1,70 +1,92 @@
 <script setup lang="ts">
-import { reactive, ref } from "vue";
+import { useSocketStore } from "@/stores/socket";
+import type { Message } from "@/types/message.type";
+import {
+  onMounted,
+  ref,
+  watch,
+  computed,
+  onBeforeUnmount,
+  type ComputedRef,
+} from "vue";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
+const socketStore = useSocketStore();
+const messages: ComputedRef<Message[]> = computed(() => socketStore.messages);
+const messageListRef = ref<HTMLElement | null>(null);
 
-const chatMessages = reactive([
-  { sender: "John", text: "Hello, how are you?" },
-  { sender: "Alice", text: "I'm good, thanks!" },
-  { sender: "John", text: "What have you been up to lately?" },
-  { sender: "Alice", text: "Just working on some projects." },
-  { sender: "John", text: "That's great!" },
-  { sender: "Alice", text: "Yes, it's been busy but exciting." },
-  { sender: "John", text: "Hello, how are you?" },
-  { sender: "Alice", text: "I'm good, thanks!" },
-  { sender: "John", text: "What have you been up to lately?" },
-  { sender: "Alice", text: "Just working on some projects." },
-  { sender: "John", text: "That's great!" },
-  { sender: "Alice", text: "Yes, it's been busy but exciting." },
-  { sender: "John", text: "Hello, how are you?" },
-  { sender: "Alice", text: "I'm good, thanks!" },
-  { sender: "John", text: "What have you been up to lately?" },
-  { sender: "Alice", text: "Just working on some projects." },
-  { sender: "John", text: "That's great!" },
-  { sender: "Alice", text: "Yes, it's been busy but exciting." },
-  { sender: "John", text: "Hello, how are you?" },
-  { sender: "Alice", text: "I'm good, thanks!" },
-  { sender: "John", text: "What have you been up to lately?" },
-  { sender: "Alice", text: "Just working on some projects." },
-  { sender: "John", text: "That's great!" },
-  { sender: "Alice", text: "Yes, it's been busy but exciting." },
-]);
+onMounted(() => socketStore.joinToChanel(route.params.chatId as string));
+onBeforeUnmount(() => {
+  socketStore.leaveChanel(route.params.chatId as string);
+});
+watch(
+  () => route.params.chatId as string,
+  (newChatId, oldChatId) => {
+    scrollToBottom();
+    if (oldChatId) {
+      socketStore.leaveChanel(oldChatId);
+    }
+    if (newChatId) {
+      socketStore.joinToChanel(newChatId);
+    }
+  }
+);
 
-const onSend = (message: string) => {
-  chatMessages.push({ sender: "You", text: message });
+const messageInput = ref("");
+
+const onSend = () => {
+  socketStore.sendMessage({
+    chanelId: route.params.chatId as string,
+    content: messageInput.value,
+  });
+  messageInput.value = "";
+  setTimeout(() => scrollToBottom(), 300);
 };
 
-const message = ref("");
+const scrollToBottom = () => {
+  const messageList = messageListRef.value;
+  if (messageList) {
+    messageList.scrollTop = messageList.scrollHeight;
+  }
+};
 </script>
 
 <template>
-  <div
-    class="min-w-screen mr-auto flex min-h-screen flex-col items-center bg-blue-100"
-  >
-    <div class="fixed bottom-0 flex w-full flex-row bg-white px-4 py-2">
-      <input
-        type="text"
-        class="ml-[17rem] w-full rounded-lg border border-gray-300 px-3 py-2 outline-none"
-        placeholder="Type your message..."
-        v-model="message"
-      />
-      <button
-        class="ml-4 rounded-lg bg-blue-700 px-4 py-2 text-white outline-none hover:bg-blue-600"
-        @click="onSend(message)"
-      >
-        Send
-      </button>
+  <div class="mx-2 mt-10 flex h-full w-full flex-col md:mt-0">
+    <div
+      class="-z-10 h-screen w-full overflow-y-scroll rounded-lg bg-slate-50 md:h-[900px]"
+      ref="messageListRef"
+    >
+      <div v-for="message of messages">
+        <div class="m-5 flex flex-row items-center">
+          <div
+            v-if="!message.createdBy.avatarUrl"
+            class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-slate-200"
+          >
+            N/A
+          </div>
+
+          <div
+            class="relative ml-3 w-full rounded-xl bg-white px-4 py-4 text-sm shadow-sm"
+          >
+            <small class="text-lg">{{ message.createdBy.username }}</small>
+            <div class="text-xl">{{ message.content }}</div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div
-      class="mb-20 ml-[17rem] h-full w-[80%] justify-end overflow-x-clip bg-slate-50 p-6"
-    >
-      <!-- Chat messages go here -->
-      <div v-for="message in chatMessages" class="mb-4">
-        <div class="mb-1 text-gray-600">{{ message.sender }}</div>
-        <div class="rounded-lg bg-gray-100 p-2">{{ message.text }}</div>
-      </div>
+    <div class="mt-4 flex">
+      <input
+        class="w h-10 w-full rounded-md bg-blue-100 px-3 text-slate-900 outline-none"
+        placeholder="Type message here..."
+        v-model="messageInput"
+      />
+
+      <button class="ml-3 h-10 w-32 rounded-md bg-blue-700" @click="onSend()">
+        Send
+      </button>
     </div>
   </div>
 </template>

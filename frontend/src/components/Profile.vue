@@ -24,42 +24,44 @@ const user: Profile = await profileStore.getUser(userId);
 </script>
 
 <template>
-  <div class="absolute bg-black bg-opacity-60">
-    <div class="flex h-screen w-screen items-center justify-center">
-      <div
-        class="flex h-[400px] w-[700px] flex-col items-center rounded-lg bg-white shadow-lg"
-      >
-        <!-- CLOSE TAG -->
+  <div
+    class="fixed bottom-0 left-0 right-0 top-0 z-50 flex items-center justify-center bg-black bg-opacity-60"
+  >
+    <div class="w-11/12 rounded-md bg-white md:w-[700px]">
+      <!-- CLOSE TAG -->
+      <div class="flex justify-end">
         <div
-          class="flex cursor-pointer select-text self-end rounded-es-md bg-rose-600 px-1 text-xs transition-all duration-200 hover:bg-red-500"
+          class="flex cursor-pointer select-text rounded-es-md bg-rose-600 px-1 text-xs transition-all duration-200 hover:bg-red-500"
           @click="profileStore.showProfile = false"
         >
           <span>✕</span>
         </div>
+      </div>
 
-        <!-- PROFILE INFO -->
-        <div
-          class="mt-2 flex min-h-[100px] w-[95%] flex-wrap content-center rounded-xl bg-slate-300 px-4 py-4"
-        >
+      <!-- PROFILE INFO -->
+      <div class="mx-4 mt-2 rounded-xl bg-slate-300 px-4 py-4">
+        <div class="flex items-center">
           <div class="h-[80px] w-[80px] rounded-xl bg-black"></div>
           <div class="ml-3 flex flex-col">
-            <span class="text-3xl"> {{ user.username }} </span>
-            <span class="text-2xl"> {{ user.email }} </span>
+            <span class="text-3xl">{{ user.username }}</span>
+            <span class="text-2xl">{{ user.email }}</span>
           </div>
         </div>
+      </div>
 
-        <!-- SERVERS -->
-        <div
-          class="mt-2 flex h-[200px] w-[95%] flex-wrap overflow-auto rounded-xl bg-slate-300 px-4 py-2"
-        >
-          <p class="select-none text-3xl font-bold text-slate-400">
-            User has not provided info
-          </p>
-        </div>
+      <!-- SERVERS -->
+      <div
+        class="mx-4 mt-2 h-[200px] overflow-auto rounded-xl bg-slate-300 px-4 py-2"
+      >
+        <p class="select-none text-3xl font-bold text-slate-400">
+          User has not provided info
+        </p>
+      </div>
 
-        <!-- LOGOUT -->
+      <!-- LOGOUT -->
+      <div class="m-2 flex items-end justify-end">
         <button
-          class="mr-2 mt-3 flex h-[30px] self-end rounded-xl bg-red-600 p-1 shadow-lg transition-all duration-200 hover:bg-red-500"
+          class="h-[30px] rounded-xl bg-red-600 p-1 shadow-lg transition-all duration-200 hover:bg-red-500"
           @click="authStore.handleLogOut"
           v-if="isUser"
           :disabled="authStore.loadingState"

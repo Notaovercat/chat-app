@@ -1,24 +1,41 @@
+import type { CreateMessage, Message } from "@/types/message.type";
 import { defineStore } from "pinia";
 import { io } from "socket.io-client";
 import { ref, type Ref } from "vue";
 
 export const useSocketStore = defineStore("socket", () => {
   const URL = "http://localhost:3333";
-  const socket = io(URL);
 
-  const messages: Ref<string[]> = ref([]);
-
-  socket.on("connect", () => {
-    console.log("Connected");
+  const socket = io(URL, {
+    autoConnect: true,
+    extraHeaders: {
+      Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+    },
   });
 
-  socket.on("recieve message", (msg) => {
-    messages.value.push(msg);
+  const messages: Ref<Message[]> = ref([]);
+
+  socket.on("chanelData", (data) => {
+    // console.log(data);
+    messages.value = data;
   });
 
-  const sendMessage = (msg: string) => {
-    socket.emit("send message", msg);
-  };
+  socket.on("newMessage", (data) => {
+    messages.value.push(data);
+  });
 
-  return { socket, messages, sendMessage };
+  function joinToChanel(chanelId: string) {
+    socket.emit("join", chanelId);
+    socket.emit("getMessages", chanelId);
+  }
+
+  function leaveChanel(chanelId: string) {
+    socket.emit("leaveChanel", chanelId);
+  }
+
+  function sendMessage(message: CreateMessage) {
+    socket.emit("sendMessage", message);
+  }
+
+  return { socket, joinToChanel, messages, sendMessage, leaveChanel };
 });

@@ -1,5 +1,6 @@
 import {
   createRouter,
+  createWebHashHistory,
   createWebHistory,
   type NavigationGuard,
 } from "vue-router";
@@ -19,7 +20,8 @@ const jwtGuard: NavigationGuard = (to, from, next) => {
 };
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(),
+  // history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: "/",
@@ -35,6 +37,7 @@ const router = createRouter({
       children: [
         {
           path: "chat/:chatId",
+          name: "chat",
           components: {
             chat: Chat,
           },

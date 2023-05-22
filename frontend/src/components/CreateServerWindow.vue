@@ -7,8 +7,6 @@ const serverStore = useServerStore();
 
 const serverInput: CreateServerInput = reactive({ name: "" });
 
-const showModal = ref(false);
-
 const errorMessage = ref("");
 
 const onCreate = async () => {
@@ -25,20 +23,16 @@ const onCreate = async () => {
 
 <template>
   <div
-    class="flex h-[44px] w-[44px] cursor-pointer rounded-full bg-blue-900 shadow-md transition-all duration-300 ease-in-out hover:bg-black hover:shadow-xl"
-    @click="showModal = true"
+    class="fixed inset-0 z-50 bg-black bg-opacity-40"
+    v-if="serverStore.showServereButton"
   >
-    <span class="mx-auto select-none text-4xl text-white">+</span>
-  </div>
-
-  <div class="fixed inset-0 bg-black bg-opacity-40" v-if="showModal">
     <div class="flex h-screen w-screen items-center justify-center">
       <div
         class="flex min-h-[200px] w-[500px] flex-col self-center rounded-lg bg-white bg-opacity-100 pb-2 shadow-lg"
       >
         <div
           class="flex cursor-pointer self-end rounded-es-md bg-rose-600 px-1 text-xs transition-all duration-200 hover:bg-red-500"
-          @click="showModal = false"
+          @click="serverStore.showServereButton = false"
         >
           <span>✕</span>
         </div>

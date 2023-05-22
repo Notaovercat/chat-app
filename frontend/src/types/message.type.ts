@@ -1,9 +1,10 @@
 import z from "zod";
+import type { User } from "./user.type";
 
 export const createMessageSchema = z
   .object({
     content: z.string(),
-    channelId: z.string().uuid().nonempty("channel ID must not be empty"),
+    chanelId: z.string().uuid().nonempty("channel ID must not be empty"),
   })
   .strict();
 
@@ -18,6 +19,11 @@ export interface Message {
   content: string;
   chanelId: string;
   creatorId: string;
+  createdBy: {
+    id: string;
+    avatarUrl: string;
+    username: string;
+  };
   createdAt: Date;
   updatedAt: Date;
 }

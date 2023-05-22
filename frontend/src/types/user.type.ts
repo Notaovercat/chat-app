@@ -13,6 +13,7 @@ export interface Profile {
 export interface User {
   id: string;
   username: string;
+  avatarUrl: string;
   email: string;
   joinedServers: Server[];
   createdServers: Server[];

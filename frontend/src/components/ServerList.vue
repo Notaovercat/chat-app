@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import ServerSideIcon from "@/components/ServerSideIcon.vue";
 import UserButton from "@/components/UserButton.vue";
-import CreateServer from "@/components/CreateServer.vue";
+import CreateServerButton from "@/components/CreateServerButton.vue";
 import type { Server } from "@/types/server.type";
 import { useProfileStore } from "@/stores/profile";
 import { useServerStore } from "@/stores/servers";
-
 const profileStore = useProfileStore();
 const serverStore = useServerStore();
 
@@ -14,10 +13,8 @@ const joinedServers: Server[] =
 </script>
 
 <template>
-  <div
-    class="fixed bottom-0 left-0 top-0 h-full w-16 overflow-visible bg-blue-950"
-  >
-    <ul class="mt-2 flex flex-col items-center space-y-2">
+  <div class="h-full overflow-visible bg-blue-950 px-2 pt-11 md:pt-0">
+    <ul class="flex flex-col items-center space-y-2 pt-2">
       <li>
         <UserButton @click="profileStore.showProfile = true" />
       </li>
@@ -27,7 +24,7 @@ const joinedServers: Server[] =
         <ServerSideIcon :server="server" />
       </li>
       <li>
-        <CreateServer />
+        <CreateServerButton />
       </li>
     </ul>
   </div>

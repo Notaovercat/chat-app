@@ -9,6 +9,7 @@ export const useServerStore = defineStore("server", () => {
   const errorMessage = ref("");
   const currentServerId = ref("");
   const currentServerName = ref("");
+  const showServereButton = ref(false);
 
   async function getJoinedServers(): Promise<Server[] | undefined> {
     try {
@@ -104,5 +105,6 @@ export const useServerStore = defineStore("server", () => {
     checkIfUserServOwner,
     currentServerId,
     currentServerName,
+    showServereButton,
   };
 });

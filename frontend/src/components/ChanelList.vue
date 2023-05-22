@@ -7,8 +7,9 @@ import { useRoute } from "vue-router";
 import type { Server } from "@/types/server.type";
 import CreateCategory from "./CreateCategory.vue";
 import CreateChanel from "./CreateChanel.vue";
-import Chanel from "./Chanel.vue";
-
+import ChanelItem from "./ChanelItem.vue";
+import { useSideBarStore } from "@/stores/sideBar";
+const sideBarStore = useSideBarStore();
 const route = useRoute();
 
 const catsStore = useCatsStore();
@@ -35,6 +36,7 @@ const loadComponent = async () => {
     server.value.creatorId,
     localStorage.getItem("userId") as string
   );
+
   categories.value = await catsStore.getCatsByServer(
     route.params.serverId as string
   );
@@ -50,9 +52,7 @@ onMounted(async () => await loadComponent());
 </script>
 
 <template>
-  <div
-    class="fixed bottom-0 left-0 top-0 h-full w-52 flex-col overflow-visible bg-blue-800 shadow-xl"
-  >
+  <div class="h-full w-52 flex-col overflow-visible bg-blue-800 shadow-xl">
     <div class="pl-2 text-center text-2xl font-bold text-white">
       <span>{{ server?.name }}</span>
     </div>
@@ -67,9 +67,9 @@ onMounted(async () => await loadComponent());
       >
         {{ category.name }}
       </span>
-      <CreateChanel :categoryId="category.id" />
+      <CreateChanel v-if="isUserOwner" :categoryId="category.id" />
       <div v-for="chanel of category.chanels">
-        <Chanel :serverId="serverStore.currentServerId" :chanel="chanel" />
+        <ChanelItem :serverId="serverStore.currentServerId" :chanel="chanel" />
       </div>
     </div>
 
