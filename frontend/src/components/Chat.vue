@@ -8,6 +8,7 @@ import {
   computed,
   onBeforeUnmount,
   type ComputedRef,
+  onBeforeMount,
 } from "vue";
 import { useRoute } from "vue-router";
 
@@ -15,15 +16,21 @@ const route = useRoute();
 const socketStore = useSocketStore();
 const messages: ComputedRef<Message[]> = computed(() => socketStore.messages);
 const messageListRef = ref<HTMLElement | null>(null);
+const userId = ref(localStorage.getItem("userId"));
 
-onMounted(() => socketStore.joinToChanel(route.params.chatId as string));
+onMounted(() => {
+  setTimeout(() => scrollToBottom(), 300);
+  socketStore.joinToChanel(route.params.chatId as string);
+});
+
 onBeforeUnmount(() => {
   socketStore.leaveChanel(route.params.chatId as string);
 });
+
 watch(
   () => route.params.chatId as string,
   (newChatId, oldChatId) => {
-    scrollToBottom();
+    setTimeout(() => scrollToBottom(), 300);
     if (oldChatId) {
       socketStore.leaveChanel(oldChatId);
     }
@@ -55,10 +62,10 @@ const scrollToBottom = () => {
 <template>
   <div class="mx-2 mt-10 flex h-full w-full flex-col md:mt-0">
     <div
-      class="-z-10 h-screen w-full overflow-y-scroll rounded-lg bg-slate-50 md:h-[900px]"
+      class="-z-10 h-screen w-full overflow-y-scroll rounded-lg bg-slate-50 md:-z-0 md:h-[900px]"
       ref="messageListRef"
     >
-      <div v-for="message of messages">
+      <div v-for="message of messages" class="">
         <div class="m-5 flex flex-row items-center">
           <div
             v-if="!message.createdBy.avatarUrl"
@@ -72,6 +79,8 @@ const scrollToBottom = () => {
           >
             <small class="text-lg">{{ message.createdBy.username }}</small>
             <div class="text-xl">{{ message.content }}</div>
+            <div v-if="message.creatorId === userId">Update</div>
+            <div v-if="message.creatorId === userId">Delete</div>
           </div>
         </div>
       </div>
@@ -79,7 +88,7 @@ const scrollToBottom = () => {
 
     <div class="mt-4 flex">
       <input
-        class="w h-10 w-full rounded-md bg-blue-100 px-3 text-slate-900 outline-none"
+        class="h-10 w-full rounded-md bg-blue-100 px-3 text-slate-900 outline-none"
         placeholder="Type message here..."
         v-model="messageInput"
       />

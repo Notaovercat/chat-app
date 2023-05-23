@@ -1,27 +1,15 @@
-import {
-  createRouter,
-  createWebHashHistory,
-  createWebHistory,
-  type NavigationGuard,
-} from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import HomeView from "@/views/HomeView.vue";
 import AuthView from "@/views/AuthView.vue";
 import ServerView from "@/views/ServerView.vue";
 import Chat from "@/components/Chat.vue";
-
-const jwtGuard: NavigationGuard = (to, from, next) => {
-  const authStore = useAuthStore();
-  if (authStore.isLogin()) {
-    next();
-  } else {
-    next({ name: "login" });
-  }
-};
+import { jwtGuard } from "./guards/jwtGuard";
+import { memberCheck } from "./guards/memberGuard";
+import { loginGuard } from "./guards/loginGuard";
 
 const router = createRouter({
   history: createWebHistory(),
-  // history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: "/",
@@ -33,7 +21,7 @@ const router = createRouter({
       path: "/server/:serverId",
       name: "server",
       component: ServerView,
-      beforeEnter: jwtGuard,
+      beforeEnter: [jwtGuard, memberCheck],
       children: [
         {
           path: "chat/:chatId",
@@ -48,14 +36,7 @@ const router = createRouter({
       path: "/login",
       name: "login",
       component: AuthView,
-      beforeEnter: (to, from, next) => {
-        const authStore = useAuthStore();
-        if (!authStore.isLogin()) {
-          next();
-        } else {
-          next({ name: "home" });
-        }
-      },
+      beforeEnter: loginGuard,
     },
     {
       path: "/:pathMatch(.*)*",

@@ -4,21 +4,16 @@ import type { Server } from "./server.type";
 
 export interface Profile {
   id: string;
+  avatarUrl: string;
   username: string;
   email: string;
   joinedServers: Server[];
   createdAt: Date;
+  updatedAt: Date;
 }
 
-export interface User {
-  id: string;
-  username: string;
-  avatarUrl: string;
-  email: string;
-  joinedServers: Server[];
+export interface User extends Profile {
   createdServers: Server[];
   createdCategories: Category[];
   messages: Message[];
-  createdAt: Date;
-  updatedAt: Date;
 }

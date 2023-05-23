@@ -26,7 +26,9 @@ const onCreate = async () => {
     name: categoryInput.name,
     serverId: serverStore.currentServerId,
   });
-  window.location.reload();
+  // window.location.reload();
+  await categoryStore.getCatsByServer(serverStore.currentServerId);
+  showModal.value = false;
 };
 </script>
 

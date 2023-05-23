@@ -5,6 +5,14 @@ import { errorHandler } from "../utils/errorsHandler";
 
 const prisma = new PrismaClient();
 
+const generateRandomCode = (): string => {
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  return Array.from(
+    { length: 5 },
+    () => characters[Math.floor(Math.random() * characters.length)]
+  ).join("");
+};
+
 export const createServer = async (req: Request, res: Response) => {
   try {
     // GET USER FROM REQUEST
@@ -13,10 +21,14 @@ export const createServer = async (req: Request, res: Response) => {
     // GET SERVER DATA FROM BODY REQUEST
     const inputServer: CreateServer = createServerSchema.parse(req.body);
 
+    // GENERATE JOIN CODE
+    const joinCode = generateRandomCode();
+
     // CREATE SERVER IN DB
     const createdServer = await prisma.server.create({
       data: {
         name: inputServer.name,
+        joinCode,
         createdBy: { connect: { id: user.id } },
       },
     });
@@ -77,15 +89,28 @@ export const joinToServer = async (req: Request, res: Response) => {
   try {
     const user = req.user as User;
     const userId = user.id;
-    const serverId = req.body["serverId"];
+    const joinCode = req.params["joinCode"];
+
+    const server = await prisma.server.findFirstOrThrow({
+      where: { joinCode },
+      include: {
+        members: true,
+      },
+    });
+
+    console.log(server);
 
     // JOIN USER TO SERVER
     await prisma.serverJoin.create({
       data: {
-        server: { connect: { id: serverId } },
+        server: { connect: { id: server.id } },
         user: { connect: { id: userId } },
       },
     });
+
+    return res
+      .status(200)
+      .json({ message: "User has joined to server", server });
   } catch (err) {
     const { errorMessage, code } = errorHandler(err);
     return res.status(code).json({ message: errorMessage });
@@ -130,6 +155,28 @@ export const getJoinedServers = async (req: Request, res: Response) => {
     return res.status(200).json({
       servers,
     });
+  } catch (err) {
+    const { errorMessage, code } = errorHandler(err);
+    return res.status(code).json({ message: errorMessage });
+  }
+};
+
+// GET ARRAY OF MEMBERS OF THE SERVER BY ID
+export const getMembers = async (req: Request, res: Response) => {
+  try {
+    const serverId = req.params["serverId"];
+
+    const usersJoined = await prisma.serverJoin.findMany({
+      where: {
+        serverId: serverId,
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    const joinedUsers = usersJoined.map((join) => join.user);
+    res.status(200).json({ members: joinedUsers });
   } catch (err) {
     const { errorMessage, code } = errorHandler(err);
     return res.status(code).json({ message: errorMessage });

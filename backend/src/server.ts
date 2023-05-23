@@ -38,6 +38,21 @@ io.of("/").on("connect", (socket) => {
 
   socket.on("sendMessage", async (input: CreateMessage) => {
     try {
+      const server = await prisma.server.findFirst({
+        include: {
+          members: true,
+        },
+        where: {
+          members: {
+            some: {
+              userId: socket.request.user.id,
+            },
+          },
+        },
+      });
+
+      if (!server) throw new Error("Unauthrized");
+
       console.log(
         `Sending messages from ${socket.request.user.id} to ${input.chanelId}`
       );
@@ -83,6 +98,29 @@ io.of("/").on("connect", (socket) => {
       });
 
     io.to(chanelId).emit("chanelData", messages);
+  });
+
+  socket.on(
+    "updateMessage",
+    async (chanelId: string, messageId: string, content: string) => {
+      console.log(`Update ${socket.request.user.id}'s message`);
+      const updatedMessage = await prisma.message.update({
+        where: { id: messageId },
+        data: { content },
+      });
+
+      io.to(chanelId).emit("onMessageUpdate", updatedMessage);
+    }
+  );
+
+  socket.on("deleteMessage", async (chanelId: string, messageId: string) => {
+    console.log(`Update ${socket.request.user.id}'s message`);
+    const updatedMessage = await prisma.message.update({
+      where: { id: messageId },
+      data: { content: "Message was deleted" },
+    });
+
+    io.to(chanelId).emit("onMessageUpdate", updatedMessage);
   });
 
   socket.on("leaveChanel", (channelId) => {

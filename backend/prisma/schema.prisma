@@ -41,9 +41,10 @@ model User {
 
 model Server {
   // Main info
-  id    String  @id @default(uuid())
-  name  String  @unique
-  image String?
+  id       String  @id @default(uuid())
+  name     String  @unique
+  image    String?
+  joinCode String?
 
   // Categories created for server
   // by server owner

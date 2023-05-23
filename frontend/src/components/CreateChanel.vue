@@ -29,7 +29,9 @@ const onCreate = async () => {
     name: chanelInput.name,
     categoryId: categoryId,
   });
-  window.location.reload();
+  // window.location.reload();
+  await chanelStore.getChanelsByCat(categoryId);
+  showModal.value = false;
 };
 </script>
 

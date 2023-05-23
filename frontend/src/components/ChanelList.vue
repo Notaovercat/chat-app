@@ -53,8 +53,11 @@ onMounted(async () => await loadComponent());
 
 <template>
   <div class="h-full w-52 flex-col overflow-visible bg-blue-800 shadow-xl">
-    <div class="pl-2 text-center text-2xl font-bold text-white">
+    <div class="flex flex-col pl-2 text-center text-2xl font-bold text-white">
       <span>{{ server?.name }}</span>
+      <small v-if="isUserOwner" class="text-xs"
+        >Join Code: {{ server?.joinCode }}</small
+      >
     </div>
 
     <div

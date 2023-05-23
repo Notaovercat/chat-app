@@ -5,11 +5,23 @@ import CreateServerButton from "@/components/CreateServerButton.vue";
 import type { Server } from "@/types/server.type";
 import { useProfileStore } from "@/stores/profile";
 import { useServerStore } from "@/stores/servers";
+import { onBeforeMount, ref, watch, type Ref } from "vue";
 const profileStore = useProfileStore();
 const serverStore = useServerStore();
 
-const joinedServers: Server[] =
-  (await serverStore.getJoinedServers()) as Server[];
+const joinedServers: Ref<Server[] | []> = ref([]);
+// (await serverStore.getJoinedServers()) as Server[];
+
+watch(
+  async () => serverStore.joinedServers,
+  async () => (joinedServers.value = serverStore.joinedServers),
+  { immediate: true }
+);
+
+onBeforeMount(async () => {
+  await serverStore.getJoinedServers();
+  joinedServers.value = serverStore.joinedServers;
+});
 </script>
 
 <template>
