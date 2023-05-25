@@ -1,13 +1,43 @@
 <script setup lang="ts">
+import ChanelList from "@/components/ChanelList.vue";
 import ServerBar from "@/components/ServerBar.vue";
+import { useSideBarStore } from "@/stores/sideBar";
+import Profile from "@/components/Profile.vue";
+import { useProfileStore } from "@/stores/profile";
+import { ref, onMounted } from "vue";
+import CreateServerWindow from "@/components/CreateServerWindow.vue";
+
+const profileStore = useProfileStore();
+const userId = ref("");
+
+onMounted(() => {
+  userId.value = profileStore.getUserId();
+});
+const sideBarStore = useSideBarStore();
 </script>
 
 <template>
-  <ServerBar />
-
-  <main class="flex min-h-screen w-screen bg-blue-300">
-    <div class="mx-auto my-auto flex text-center text-5xl">
-      <p>Home</p>
+  <div class="flex flex-row">
+    <div class="fixed bottom-0 left-0 top-0 min-h-screen">
+      <!-- <ShowBarButton /> -->
+      <ServerBar v-if="sideBarStore.showBar" />
     </div>
-  </main>
+  </div>
+  <div class="items-centerx flex">
+    <div class="h-screen w-screen bg-blue-200">Home</div>
+  </div>
+
+  <Suspense>
+    <Profile v-if="profileStore.showProfile" :userId="userId" :isUser="true" />
+    <template #fallback> Loading... </template>
+  </Suspense>
+
+  <CreateServerWindow />
+
+  <div
+    class="visible fixed left-3 top-1 z-50 h-11 w-8 cursor-pointer select-none content-center justify-center rounded-md bg-sky-200 text-center md:invisible"
+    @click="sideBarStore.switchSideBar()"
+  >
+    <span class="text-4xl">≡</span>
+  </div>
 </template>
