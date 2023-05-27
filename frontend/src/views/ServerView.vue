@@ -6,6 +6,7 @@ import Profile from "@/components/Profile.vue";
 import { useProfileStore } from "@/stores/profile";
 import { ref, onMounted } from "vue";
 import CreateServerWindow from "@/components/CreateServerWindow.vue";
+import ChangeAvatar from "@/components/ChangeAvatar.vue";
 
 const profileStore = useProfileStore();
 const userId = ref("");
@@ -38,7 +39,7 @@ const sideBarStore = useSideBarStore();
   </Suspense>
 
   <CreateServerWindow />
-
+  <ChangeAvatar />
   <div
     class="visible fixed left-3 top-1 z-50 h-11 w-8 cursor-pointer select-none content-center justify-center rounded-md bg-sky-200 text-center md:invisible"
     @click="sideBarStore.switchSideBar()"

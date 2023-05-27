@@ -8,6 +8,7 @@ import chanelRouter from "./routers/chanel.router";
 import categoryRouter from "./routers/category.router";
 import passport from "passport";
 import { jwtStrategy } from "./utils/jwtConfig";
+import path from "path";
 
 const app: Express = express();
 
@@ -16,7 +17,7 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-
+app.use(express.static(path.join(__dirname, "../public")));
 // AUTH
 app.use(passport.initialize());
 passport.use(jwtStrategy);

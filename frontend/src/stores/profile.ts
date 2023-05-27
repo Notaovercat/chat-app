@@ -33,8 +33,6 @@ export const useProfileStore = defineStore("profile", () => {
       if (!profile) {
         throw new Error("Invalid profile object");
       }
-
-      console.log(profile);
       return profile;
     } catch (err) {
       loadingState.value = false;

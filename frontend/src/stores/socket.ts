@@ -15,13 +15,19 @@ export const useSocketStore = defineStore("socket", () => {
 
   const messages: Ref<Message[]> = ref([]);
 
-  socket.on("chanelData", (data) => {
-    // console.log(data);
+  socket.on("onGetMessages", (data) => {
     messages.value = data;
   });
 
   socket.on("newMessage", (data) => {
     messages.value.push(data);
+  });
+
+  socket.on("onUpdateMessage", (data: Message) => {
+    const index = messages.value.findIndex((msg) => msg.id === data.id);
+    if (index !== -1) {
+      messages.value[index] = data;
+    }
   });
 
   function joinToChanel(chanelId: string) {
@@ -37,5 +43,21 @@ export const useSocketStore = defineStore("socket", () => {
     socket.emit("sendMessage", message);
   }
 
-  return { socket, joinToChanel, messages, sendMessage, leaveChanel };
+  function updateMessage(chanelId: string, messageId: string, content: string) {
+    socket.emit("updateMessage", chanelId, messageId, content);
+  }
+
+  function deleteMessage(chanelId: string, messageId: string) {
+    socket.emit("deleteMessage", chanelId, messageId);
+  }
+
+  return {
+    socket,
+    joinToChanel,
+    messages,
+    sendMessage,
+    leaveChanel,
+    updateMessage,
+    deleteMessage,
+  };
 });

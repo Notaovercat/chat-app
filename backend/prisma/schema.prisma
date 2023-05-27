@@ -17,7 +17,8 @@ model User {
   email    String @unique
   password String
 
-  avatarUrl String?
+  avatarUrl  String?
+  avatarName String?
 
   // Serevrs where user is a member
   joinedServers ServerJoin[] @relation(name: "joinServers")
@@ -119,8 +120,10 @@ model Chanel {
 
 model Message {
   // Main info
-  id      String @id @default(uuid())
-  content String
+  id               String  @id @default(uuid())
+  content          String
+  isMessageDeleted Boolean @default(false)
+  isMessageUpdated Boolean @default(false)
 
   // Chanel where message was writed
   chanel   Chanel @relation(fields: [chanelId], references: [id])

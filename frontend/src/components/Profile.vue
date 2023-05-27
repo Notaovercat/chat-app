@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { useProfileStore } from "@/stores/profile";
 import { useAuthStore } from "@/stores/auth";
-import { useServerStore } from "@/stores/servers";
 import type { Profile } from "@/types/user.type";
-import ServerCard from "@/components/ServerCard.vue";
-import type { Server } from "@/types/server.type";
+import { useAvatarStore } from "@/stores/avatar";
 
 interface ProfileProps {
   userId: string;
@@ -14,13 +12,12 @@ interface ProfileProps {
 const props = defineProps<ProfileProps>();
 const profileStore = useProfileStore();
 const authStore = useAuthStore();
-const serverStore = useServerStore();
+const avatarStore = useAvatarStore();
 
 const userId = props.userId;
 const isUser = props.isUser;
 
-const user: Profile = await profileStore.getUser(userId);
-// const servers: Server[] = await serverStore.getJoinedServers()
+const profile: Profile = await profileStore.getUser(userId);
 </script>
 
 <template>
@@ -41,10 +38,43 @@ const user: Profile = await profileStore.getUser(userId);
       <!-- PROFILE INFO -->
       <div class="mx-4 mt-2 rounded-xl bg-slate-300 px-4 py-4">
         <div class="flex items-center">
-          <div class="h-[80px] w-[80px] rounded-xl bg-black"></div>
+          <!-- USER AVATAR -->
+
+          <!-- NO AVATAR -->
+          <div
+            @click="avatarStore.showAvatarWindow = true"
+            v-if="!profile.avatarName"
+            class="flex h-[80px] w-[80px] cursor-pointer items-center justify-center rounded-xl bg-slate-400 text-slate-300"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="h-18 w-18"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+              />
+            </svg>
+          </div>
+
+          <!-- AVATAR IMG -->
+          <div v-else>
+            <img
+              @click="avatarStore.showAvatarWindow = true"
+              class="inline-block h-[80px] w-[80px] cursor-pointer select-none rounded-lg"
+              :src="'http://localhost:3333/images/' + profile.avatarName"
+            />
+          </div>
+
+          <!-- USER INFO -->
           <div class="ml-3 flex flex-col">
-            <span class="text-3xl">{{ user.username }}</span>
-            <span class="text-2xl">{{ user.email }}</span>
+            <span class="text-3xl">{{ profile.username }}</span>
+            <span class="text-2xl">{{ profile.email }}</span>
           </div>
         </div>
       </div>

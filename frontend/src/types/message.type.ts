@@ -18,10 +18,12 @@ export interface Message {
   id: string;
   content: string;
   chanelId: string;
+  isMessageDeleted: boolean;
+  isMessageUpdated: boolean;
   creatorId: string;
   createdBy: {
     id: string;
-    avatarUrl: string;
+    avatarName: string;
     username: string;
   };
   createdAt: Date;

@@ -165,7 +165,7 @@ export const useServerStore = defineStore("server", () => {
 
       // MAKE A REQUEST
       const members = await getServerMembers(serverId);
-      console.log(members);
+
       if (!members) return false;
       if (members.find((member) => member.id === userId)) return true;
       return false;

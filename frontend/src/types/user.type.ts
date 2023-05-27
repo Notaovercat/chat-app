@@ -5,6 +5,7 @@ import type { Server } from "./server.type";
 export interface Profile {
   id: string;
   avatarUrl: string;
+  avatarName: string;
   username: string;
   email: string;
   joinedServers: Server[];

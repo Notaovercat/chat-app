@@ -9,7 +9,7 @@ const fileStorage = diskStorage({
     file: Express.Multer.File,
     callback: (error: Error | null, destination: string) => void
   ) => {
-    const destinationPath = path.join(__dirname, "../images");
+    const destinationPath = path.join(__dirname, "../../public/images");
     fs.mkdirSync(destinationPath, { recursive: true });
     callback(null, destinationPath);
   },
@@ -21,9 +21,12 @@ const fileStorage = diskStorage({
   ) => {
     const now = new Date();
     const dateStr = now.toLocaleDateString().replace(/\//g, "-");
-    const timeStr = now.toLocaleTimeString().replace(/:/g, "-");
-    const filename = `${dateStr}_${timeStr}_${file.originalname}`;
-
+    const timeStr = now
+      .toLocaleTimeString()
+      .replace(/:/g, "-")
+      .replace(/\s/g, "");
+    const originalFilename = file.originalname.replace(/\s/g, "_");
+    const filename = `${dateStr}_${timeStr}_${originalFilename}`;
     callback(null, filename);
   },
 });
@@ -33,9 +36,8 @@ const imageFilter = (
   file: Express.Multer.File,
   callback: FileFilterCallback
 ) => {
-  if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+  if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/))
     return callback(new Error("Only image files are allowed"));
-  }
   callback(null, true);
 };
 

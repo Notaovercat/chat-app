@@ -64,7 +64,7 @@ io.of("/").on("connect", (socket) => {
           },
           include: {
             createdBy: {
-              select: { id: true, username: true },
+              select: { id: true, username: true, avatarName: true },
             },
           },
         })
@@ -88,8 +88,11 @@ io.of("/").on("connect", (socket) => {
         },
         include: {
           createdBy: {
-            select: { id: true, username: true },
+            select: { id: true, username: true, avatarName: true },
           },
+        },
+        orderBy: {
+          createdAt: "asc",
         },
       })
       .catch((err) => {
@@ -97,30 +100,57 @@ io.of("/").on("connect", (socket) => {
         return new Error("Failed get messages");
       });
 
-    io.to(chanelId).emit("chanelData", messages);
+    io.to(chanelId).emit("onGetMessages", messages);
   });
 
   socket.on(
     "updateMessage",
     async (chanelId: string, messageId: string, content: string) => {
-      console.log(`Update ${socket.request.user.id}'s message`);
-      const updatedMessage = await prisma.message.update({
-        where: { id: messageId },
-        data: { content },
-      });
+      const foundMessage = await prisma.message
+        .findFirstOrThrow({ where: { id: messageId } })
+        .catch((err) => console.log(err));
+      if (socket.request.user.id != foundMessage?.creatorId)
+        throw new Error("Unauthorized");
 
-      io.to(chanelId).emit("onMessageUpdate", updatedMessage);
+      console.log(`Updating ${socket.request.user.id}'s message`);
+
+      const updatedMessage = await prisma.message
+        .update({
+          where: { id: messageId },
+          data: { content, isMessageUpdated: true },
+          include: {
+            createdBy: {
+              select: { id: true, username: true, avatarName: true },
+            },
+          },
+        })
+        .catch((err) => console.log(err));
+
+      io.to(chanelId).emit("onUpdateMessage", updatedMessage);
     }
   );
 
   socket.on("deleteMessage", async (chanelId: string, messageId: string) => {
-    console.log(`Update ${socket.request.user.id}'s message`);
-    const updatedMessage = await prisma.message.update({
-      where: { id: messageId },
-      data: { content: "Message was deleted" },
-    });
+    const foundMessage = await prisma.message
+      .findFirstOrThrow({ where: { id: messageId } })
+      .catch((err) => console.log(err));
+    if (socket.request.user.id != foundMessage?.creatorId)
+      throw new Error("Unauthorized");
 
-    io.to(chanelId).emit("onMessageUpdate", updatedMessage);
+    console.log(`Deleting ${socket.request.user.id}'s message`);
+    const deletedMessage = await prisma.message
+      .update({
+        where: { id: messageId },
+        data: { content: "Message was deleted", isMessageDeleted: true },
+        include: {
+          createdBy: {
+            select: { id: true, username: true, avatarName: true },
+          },
+        },
+      })
+      .catch((err) => console.log(err));
+
+    io.to(chanelId).emit("onUpdateMessage", deletedMessage);
   });
 
   socket.on("leaveChanel", (channelId) => {
