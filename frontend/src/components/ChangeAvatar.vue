@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { useAvatarStore } from "@/stores/avatar";
-import { ref } from "vue";
+import { ref, type Ref } from "vue";
 
 const avatarStore = useAvatarStore();
 const errorMessage = ref("");
-const fileInput = ref<File | null>();
+const fileInput: Ref<File | null | undefined> = ref();
 
 const onSubmit = async () => {
   if (!fileInput.value) {

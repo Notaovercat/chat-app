@@ -118,6 +118,7 @@ const scrollToBottom = () => {
             />
           </div>
 
+          <!-- MESSAGE -->
           <div
             class="relative ml-3 flex w-full flex-wrap rounded-xl bg-white px-4 py-4 text-sm shadow-sm"
             @mouseenter="if (!editMode) hoveredMessage = message.id;"

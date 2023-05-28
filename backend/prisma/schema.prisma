@@ -44,7 +44,8 @@ model Server {
   // Main info
   id       String  @id @default(uuid())
   name     String  @unique
-  image    String?
+  iconPath String?
+  iconName String?
   joinCode String?
 
   // Categories created for server
@@ -52,10 +53,9 @@ model Server {
   categories Category[]
 
   // Members of the server
-  members ServerJoin[]
-
+  members   ServerJoin[]
   // Server owner
-  createdBy User   @relation(name: "createServers", fields: [creatorId], references: [id])
+  createdBy User         @relation(name: "createServers", fields: [creatorId], references: [id])
   creatorId String
 
   // Time stamps
@@ -67,7 +67,7 @@ model ServerJoin {
   id       String @id @default(uuid())
   user     User   @relation(name: "joinServers", fields: [userId], references: [id])
   userId   String
-  server   Server @relation(fields: [serverId], references: [id])
+  server   Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
   serverId String
 
   joinedAt DateTime @default(now())
@@ -82,7 +82,7 @@ model Category {
   name String
 
   // Server where category is created
-  server   Server @relation(fields: [serverId], references: [id])
+  server   Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
   serverId String
 
   // Chanels included into the category 
@@ -103,7 +103,7 @@ model Chanel {
   name String
 
   // Category where chanel is containing
-  category   Category @relation(fields: [categoryId], references: [id])
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   categoryId String
 
   // Category author
@@ -126,7 +126,7 @@ model Message {
   isMessageUpdated Boolean @default(false)
 
   // Chanel where message was writed
-  chanel   Chanel @relation(fields: [chanelId], references: [id])
+  chanel   Chanel @relation(fields: [chanelId], references: [id], onDelete: Cascade)
   chanelId String
 
   // User, who writed message

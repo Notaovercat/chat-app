@@ -2,44 +2,35 @@
 import { useCatsStore } from "@/stores/categories";
 import { useServerStore } from "@/stores/servers";
 import type { Category } from "@/types/category.type";
-import { ref, watch, type Ref, onMounted } from "vue";
+import { ref, watch, type Ref, onMounted, onBeforeMount } from "vue";
 import { useRoute } from "vue-router";
 import type { Server } from "@/types/server.type";
 import CreateCategory from "./CreateCategory.vue";
 import CreateChanel from "./CreateChanel.vue";
 import ChanelItem from "./ChanelItem.vue";
-import { useSideBarStore } from "@/stores/sideBar";
-const sideBarStore = useSideBarStore();
 const route = useRoute();
 
 const catsStore = useCatsStore();
 const categories: Ref<Category[]> = ref([]);
-
+const serverId = ref("");
 const serverStore = useServerStore();
 const server = ref<Server | undefined>();
 const isUserOwner = ref(false);
 
-// const chanStore = useChanStore();
-// const chanels: Ref<Chanel[]> = ref([]);
-
 const loadComponent = async () => {
+  serverId.value = route.params.serverId as string;
   catsStore.loadingState = true;
-  categories.value = [];
-  serverStore.currentServerId = route.params.serverId as string;
-
-  server.value = await serverStore.getServerById(
-    route.params.serverId as string
-  );
+  serverStore.currentServerId = serverId.value;
+  server.value = await serverStore.getServerById(serverId.value);
   if (!server.value) throw new Error();
   serverStore.currentServerName = server.value.name;
   isUserOwner.value = serverStore.checkIfUserServOwner(
     server.value.creatorId,
     localStorage.getItem("userId") as string
   );
+  await catsStore.getCatsByServer(server.value.id);
+  categories.value = catsStore.categories;
 
-  categories.value = await catsStore.getCatsByServer(
-    route.params.serverId as string
-  );
   catsStore.loadingState = false;
 };
 
@@ -48,7 +39,12 @@ watch(
   async () => await loadComponent()
 );
 
-onMounted(async () => await loadComponent());
+watch(
+  () => catsStore.categories,
+  async () => (categories.value = catsStore.categories)
+);
+
+onBeforeMount(async () => await loadComponent());
 </script>
 
 <template>
@@ -70,7 +66,11 @@ onMounted(async () => await loadComponent());
       >
         {{ category.name }}
       </span>
-      <CreateChanel v-if="isUserOwner" :categoryId="category.id" />
+      <CreateChanel
+        v-if="isUserOwner"
+        :categoryId="category.id"
+        :server-id="serverId"
+      />
       <div v-for="chanel of category.chanels">
         <ChanelItem :serverId="serverStore.currentServerId" :chanel="chanel" />
       </div>

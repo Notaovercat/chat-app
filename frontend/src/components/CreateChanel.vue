@@ -1,14 +1,17 @@
 <script setup lang="ts">
+import { useCatsStore } from "@/stores/categories";
 import { useChanStore } from "@/stores/chanels";
 import { reactive, ref } from "vue";
 
 interface CreateChanelprops {
   categoryId: string;
+  serverId: string;
 }
 
-const { categoryId } = defineProps<CreateChanelprops>();
+const { categoryId, serverId } = defineProps<CreateChanelprops>();
 
 const chanelStore = useChanStore();
+const catsStore = useCatsStore();
 
 const chanelInput = reactive({
   name: "",
@@ -29,8 +32,7 @@ const onCreate = async () => {
     name: chanelInput.name,
     categoryId: categoryId,
   });
-  // window.location.reload();
-  await chanelStore.getChanelsByCat(categoryId);
+  await catsStore.getCatsByServer(serverId);
   showModal.value = false;
 };
 </script>

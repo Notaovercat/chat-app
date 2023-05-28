@@ -3,6 +3,7 @@ import { useProfileStore } from "@/stores/profile";
 import { useAuthStore } from "@/stores/auth";
 import type { Profile } from "@/types/user.type";
 import { useAvatarStore } from "@/stores/avatar";
+import { ref } from "vue";
 
 interface ProfileProps {
   userId: string;
@@ -13,6 +14,7 @@ const props = defineProps<ProfileProps>();
 const profileStore = useProfileStore();
 const authStore = useAuthStore();
 const avatarStore = useAvatarStore();
+const aip_url = ref(import.meta.env.VITE_API_URL);
 
 const userId = props.userId;
 const isUser = props.isUser;
@@ -67,7 +69,7 @@ const profile: Profile = await profileStore.getUser(userId);
             <img
               @click="avatarStore.showAvatarWindow = true"
               class="inline-block h-[80px] w-[80px] cursor-pointer select-none rounded-lg"
-              :src="'http://localhost:3333/images/' + profile.avatarName"
+              :src="`${aip_url}/images/${profile.avatarName}`"
             />
           </div>
 

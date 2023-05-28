@@ -19,7 +19,14 @@ export const createServer = async (req: Request, res: Response) => {
     const user = req.user as User;
 
     // GET SERVER DATA FROM BODY REQUEST
-    const inputServer: CreateServer = createServerSchema.parse(req.body);
+    const inputServer: CreateServer = createServerSchema.parse(
+      JSON.parse(req.body.serverInput)
+    );
+
+    // GET FILE
+    const filePath = req.file?.path;
+    const fileName = req.file?.filename;
+    console.log(fileName);
 
     // GENERATE JOIN CODE
     const joinCode = generateRandomCode();
@@ -28,6 +35,8 @@ export const createServer = async (req: Request, res: Response) => {
     const createdServer = await prisma.server.create({
       data: {
         name: inputServer.name,
+        iconPath: filePath,
+        iconName: fileName,
         joinCode,
         createdBy: { connect: { id: user.id } },
       },
@@ -98,8 +107,6 @@ export const joinToServer = async (req: Request, res: Response) => {
       },
     });
 
-    console.log(server);
-
     // JOIN USER TO SERVER
     await prisma.serverJoin.create({
       data: {
@@ -122,20 +129,6 @@ export const getJoinedServers = async (req: Request, res: Response) => {
   try {
     const user = req.user as User;
     const userId = user.id;
-
-    // const foundJoinedServers = await prisma.server.findMany({
-    //   where: {
-    //     members: {
-    //       some: { userId },
-    //     },
-    //   },
-    //   select: {
-    //     id: true,
-    //     name: true,
-    //     image: true,
-    //   },
-    //   orderBy: {members:{}},
-    // });
 
     const foundJoinedServers = await prisma.serverJoin.findMany({
       where: { userId: userId },

@@ -1,16 +1,19 @@
 import type { Category, CreateCategoryInput } from "@/types/category.type";
 import axios from "axios";
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { ref, type Ref } from "vue";
 
 export const useCatsStore = defineStore("category", () => {
   const loadingState = ref(false);
   const apiUrl = import.meta.env.VITE_API_URL;
   const errorMessage = ref("");
+  const categories: Ref<Category[]> = ref([]);
 
-  async function getCatsByServer(id: string): Promise<Category[]> {
+  async function getCatsByServer(id: string) {
     // LOADING TRUE
     loadingState.value = true;
+
+    categories.value = [];
 
     // CLEAR ERROR MESSAGE
     errorMessage.value = "";
@@ -26,9 +29,9 @@ export const useCatsStore = defineStore("category", () => {
     // LOADING FALSE
     loadingState.value = false;
 
-    const categories = response.data.categories as Category[];
+    categories.value = response.data.categories as Category[];
 
-    return categories;
+    // return categories;
   }
 
   async function createCateory(
@@ -62,5 +65,5 @@ export const useCatsStore = defineStore("category", () => {
     }
   }
 
-  return { getCatsByServer, createCateory, loadingState };
+  return { getCatsByServer, createCateory, loadingState, categories };
 });

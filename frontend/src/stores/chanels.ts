@@ -1,14 +1,15 @@
 import type { Chanel, CreateChanel } from "@/types/chanel.type";
 import axios from "axios";
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { ref, type Ref } from "vue";
 
 export const useChanStore = defineStore("chanel", () => {
   const loadingState = ref(false);
   const apiUrl = import.meta.env.VITE_API_URL;
   const errorMessage = ref("");
+  const chanels: Ref<Chanel[]> = ref([]);
 
-  async function getChanelsByCat(catId: string): Promise<Chanel[]> {
+  async function getChanelsByCat(catId: string) {
     // LOADING TRUE
     loadingState.value = true;
 
@@ -26,9 +27,7 @@ export const useChanStore = defineStore("chanel", () => {
     // LOADING FALSE
     loadingState.value = false;
 
-    const chanels = response.data.categories as Chanel[];
-
-    return chanels;
+    chanels.value = response.data.categories as Chanel[];
   }
 
   async function createChanel(chanelInput: CreateChanel) {
@@ -56,5 +55,5 @@ export const useChanStore = defineStore("chanel", () => {
     }
   }
 
-  return { createChanel, getChanelsByCat, loadingState, errorMessage };
+  return { createChanel, getChanelsByCat, loadingState, errorMessage, chanels };
 });

@@ -1,6 +1,6 @@
 import type { CreateServerInput, Server } from "@/types/server.type";
 import type { Profile, User } from "@/types/user.type";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { defineStore } from "pinia";
 import { ref, type Ref } from "vue";
 
@@ -66,7 +66,8 @@ export const useServerStore = defineStore("server", () => {
   }
 
   async function createServer(
-    serverInput: CreateServerInput
+    serverInput: CreateServerInput,
+    fileInput: File
   ): Promise<Server | undefined> {
     try {
       // LOADING TRUE
@@ -75,9 +76,15 @@ export const useServerStore = defineStore("server", () => {
       // CLEAR ERROR MESSAGE
       errorMessage.value = "";
 
+      const formData = new FormData();
+
+      console.log(fileInput);
+      formData.append("image", fileInput);
+      formData.append("serverInput", JSON.stringify(serverInput));
+
       // MAKE A REQUEST
       const token = localStorage.getItem("jwt");
-      const response = await axios.post(`${apiUrl}/servers/`, serverInput, {
+      const response = await axios.post(`${apiUrl}/servers/`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -88,7 +95,12 @@ export const useServerStore = defineStore("server", () => {
 
       return response.data.server as Server;
     } catch (error) {
+      if (error instanceof AxiosError) {
+        if (error.status === 400) errorMessage.value = "Bad name";
+        else errorMessage.value = "Server error";
+      }
       console.log(error);
+      loadingState.value = false;
     }
   }
 

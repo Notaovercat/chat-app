@@ -17,7 +17,7 @@ export type UpdateServerInput = z.infer<typeof updateServerSchema>;
 export interface Server {
   id: string;
   name: string;
-  image?: string;
+  iconName?: string;
   creatorId: string;
   joinCode: string;
   // categories: Category[];

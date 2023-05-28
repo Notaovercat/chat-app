@@ -19,11 +19,11 @@ const sideBarStore = useSideBarStore();
 
 <template>
   <div class="flex flex-row">
-    <div class="fixed bottom-0 left-0 top-0 min-h-screen">
+    <div class="fixed bottom-0 left-0 top-0 z-20 min-h-screen">
       <!-- <ShowBarButton /> -->
       <ServerBar v-if="sideBarStore.showBar" />
     </div>
-    <div class="fixed bottom-0 left-0 top-0 ml-[3.6rem] min-h-screen">
+    <div class="fixed bottom-0 left-0 top-0 z-10 ml-[3.6rem] min-h-screen">
       <ChanelList v-if="sideBarStore.showBar" />
     </div>
   </div>
