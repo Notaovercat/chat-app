@@ -1,35 +1,44 @@
-import http, { IncomingMessage } from "http";
+import http from "http";
 import dotenv from "dotenv";
 import app from "./app";
+import passport from "passport";
 import { Socket, Server as SocketServer } from "socket.io";
 import { PrismaClient, User } from "@prisma/client";
 import { CreateMessage } from "./types/message.type";
-import passport from "passport";
 
+// ADD USER TO SOCKET'S REQUEST
 declare module "http" {
   interface IncomingMessage {
     user: User;
   }
 }
 
-const prisma = new PrismaClient();
-
+// CONFIGURE .ENV
 dotenv.config();
 
-const port = process.env.PORT || 3333;
+// DECLARING PRISMA CLIENT
+const prisma = new PrismaClient();
 
+// CONFIGURE PORT
+const port = process.env.PORT;
+
+// CREATE SERVER
 const server = http.createServer(app);
+
+// CREATE SOCKET SERVER
 const io = new SocketServer(server, {
   cors: {
     origin: "*",
   },
 });
 
+// CONFIGURE AUTHORIZATION FOR SOCKET SERVER
 const wrap = (middleware: any) => (socket: Socket, next: any) =>
   middleware(socket.request, {}, next);
 io.use(wrap(passport.initialize()));
 io.use(wrap(passport.authenticate("jwt", { session: false })));
 
+// CONFIGURE SOCKET
 io.of("/").on("connect", (socket) => {
   socket.on("join", (chanelId: string) => {
     console.log(`${socket.request.user.id} joined to a ${chanelId}`);
@@ -159,6 +168,7 @@ io.of("/").on("connect", (socket) => {
   });
 });
 
+// START SERVER
 server.listen(port, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
 });
