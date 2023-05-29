@@ -5,6 +5,7 @@ import passport from "passport";
 import { Socket, Server as SocketServer } from "socket.io";
 import { PrismaClient, User } from "@prisma/client";
 import { CreateMessage } from "./types/message.type";
+import RedisService from "./utils/redis";
 
 // ADD USER TO SOCKET'S REQUEST
 declare module "http" {
@@ -168,6 +169,10 @@ io.of("/").on("connect", (socket) => {
   });
 });
 
+process.on("SIGINT", () => {
+  RedisService.closeConnection();
+  process.exit();
+});
 // START SERVER
 server.listen(port, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);

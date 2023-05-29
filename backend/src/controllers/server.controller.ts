@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { PrismaClient, Server, User } from "@prisma/client";
 import { CreateServer, createServerSchema } from "../types/server.type";
 import { errorHandler } from "../utils/errorsHandler";
+import RedisService from "../utils/redis";
 
 const prisma = new PrismaClient();
 
@@ -127,27 +128,45 @@ export const joinToServer = async (req: Request, res: Response) => {
 // GET JOINED SERVERS
 export const getJoinedServers = async (req: Request, res: Response) => {
   try {
+    // CREATE AN INSTANCE OF REDIS CLIENT
+    const redis = RedisService.getClient();
+
+    // GET USER ID FROM AUTH HEADER
     const user = req.user as User;
     const userId = user.id;
 
-    const foundJoinedServers = await prisma.serverJoin.findMany({
-      where: { userId: userId },
-      select: {
-        server: true,
-      },
-    });
+    // CHRCK IF DATA IS ALREADY CASHED
+    const cashedServers = await redis.get(`joinedServers:${userId}`);
 
-    // const servers
-    const servers: Server[] = foundJoinedServers.reduce(
-      (acc: any, { server }) => {
-        acc[server.id] = server;
-        return acc;
-      },
-      {}
-    );
-    return res.status(200).json({
-      servers,
-    });
+    if (cashedServers) {
+      // IF DATA IS CASHED, RETURN CASHE
+      console.log("get data from cashe");
+      const servers = JSON.parse(cashedServers);
+      return res.status(200).json({ servers });
+    } else {
+      console.log("get data from prisma");
+      // IF IT'S NOT, STORE THE RESULT OF DB QUERY
+      const foundJoinedServers = await prisma.serverJoin.findMany({
+        where: { userId: userId },
+        select: {
+          server: true,
+        },
+      });
+
+      // const servers
+      const servers: Server[] = foundJoinedServers.reduce(
+        (acc: any, { server }) => {
+          acc[server.id] = server;
+          return acc;
+        },
+        {}
+      );
+
+      await redis.set(`joinedServers:${userId}`, JSON.stringify(servers));
+      return res.status(200).json({
+        servers,
+      });
+    }
   } catch (err) {
     const { errorMessage, code } = errorHandler(err);
     return res.status(code).json({ message: errorMessage });

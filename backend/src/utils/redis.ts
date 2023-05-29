@@ -14,6 +14,14 @@ class RedisService {
     return this.redis;
   }
 
+  public async get(key: string): Promise<string | null> {
+    return this.redis.get(key);
+  }
+
+  public async set(key: string, value: string): Promise<string | null> {
+    return this.redis.set(key, value);
+  }
+
   public closeConnection(): void {
     this.redis.quit();
   }
