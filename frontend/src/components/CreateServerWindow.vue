@@ -90,7 +90,7 @@ const onFileChanged = ($event: Event) => {
             <!-- SERVER ICON BUTTON -->
             <div class="flex w-2/6 flex-col">
               <label
-                class="shadow- flex cursor-pointer flex-col items-center justify-center rounded-lg bg-white px-4 uppercase tracking-wide text-blue-600 shadow-md file:bg-slate-400 hover:bg-blue-400 hover:text-white"
+                class="flex cursor-pointer flex-col items-center justify-center rounded-lg bg-white px-4 uppercase tracking-wide text-blue-600 shadow-md file:bg-slate-400 hover:bg-blue-400 hover:text-white"
               >
                 <svg
                   class="h-8 w-8"
