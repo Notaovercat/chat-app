@@ -11,7 +11,8 @@ import {
   type Ref,
 } from "vue";
 import { useRoute } from "vue-router";
-import Observer from "./Observer.vue";
+import ObserverBottom from "./ObserverBottom.vue";
+import ObserverTop from "./ObserverTop.vue";
 
 const route = useRoute();
 const socketStore = useSocketStore();
@@ -24,6 +25,7 @@ const editMode = ref(false);
 const editContent = ref("");
 const aip_url = ref(import.meta.env.VITE_API_URL);
 const isBottom = ref(false);
+const isTop = ref(false);
 const mobileState = ref(false);
 const onEditMode = (content: string) => {
   editMode.value = true;
@@ -85,9 +87,23 @@ const scrollToBottom = () => {
   }
 };
 
-const onScroll = (state: boolean) => {
-  isBottom.value = state;
+const scrollToHalfBottom = () => {
+  const messageList = messageListRef.value;
+  if (messageList) {
+    // console.log(messageList.scrollTop, messageList.scrollHeight);
+    messageList.scrollTop = messageList.scrollHeight / 2;
+  }
 };
+
+watch(
+  () => isTop.value,
+  () => {
+    if (isTop.value) {
+      socketStore.onLoadPrevMsgs(route.params.chatId as string);
+      setTimeout(() => scrollToHalfBottom(), 200);
+    }
+  }
+);
 </script>
 
 <template>
@@ -101,8 +117,10 @@ const onScroll = (state: boolean) => {
         class="-z-10 h-screen max-h-[900px] w-full overflow-y-scroll rounded-lg bg-slate-50 md:-z-0 md:h-[900px]"
         ref="messageListRef"
       >
+        <ObserverTop @intersect="isTop = $event" />
+
         <!-- CHAT WINDOW -->
-        <div v-for="message of messages" :key="message.id">
+        <div v-for="message of messages.slice()" :key="message.id">
           <div class="m-5 flex flex-row items-center">
             <!-- USER AVATAR -->
 
@@ -301,7 +319,7 @@ const onScroll = (state: boolean) => {
             </div>
           </div>
         </div>
-        <Observer @intersect="onScroll($event)" />
+        <ObserverBottom @intersect="isBottom = $event" />
       </div>
     </div>
 

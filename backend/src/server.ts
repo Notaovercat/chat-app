@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import app from "./app";
 import passport from "passport";
 import { Socket, Server as SocketServer } from "socket.io";
-import { PrismaClient, User } from "@prisma/client";
+import { Message, PrismaClient, User } from "@prisma/client";
 import { CreateMessage } from "./types/message.type";
 import RedisService from "./utils/redis";
 
@@ -102,17 +102,29 @@ io.of("/").on("connect", (socket) => {
           },
         },
         orderBy: {
-          createdAt: "asc",
+          createdAt: "desc",
         },
-        // take: 10,
-        // skip: 3,
+        take: 10,
+        skip: page,
       })
       .catch((err) => {
         console.error(err);
         return new Error("Failed get messages");
       });
 
-    io.to(chanelId).emit("onGetMessages", messages);
+    const reversedMessages = (
+      messages as Array<
+        Message & {
+          createdBy: {
+            id: string;
+            username: string;
+            avatarName: string | null;
+          };
+        }
+      >
+    ).reverse();
+
+    io.to(chanelId).emit("onGetMessages", reversedMessages);
   });
 
   socket.on(
