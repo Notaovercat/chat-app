@@ -20,5 +20,5 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="root" class="mb-10 ml-2 h-2 w-9 bg-black"></div>
+  <div ref="root" class="mb-16 ml-2 h-2 w-9"></div>
 </template>
