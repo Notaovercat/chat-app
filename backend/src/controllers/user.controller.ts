@@ -1,25 +1,43 @@
 import { Request, Response } from "express";
 import { PrismaClient, User } from "@prisma/client";
 import { errorHandler } from "../utils/errorsHandler";
+import RedisService from "../utils/redis";
 const prisma = new PrismaClient();
 
 export const getUserProfile = async (req: Request, res: Response) => {
   try {
+    // CREATE AN INSTANCE OF REDIS CLIENT
+    const redis = RedisService.getClient();
+
+    // GET USER ID FROM PARAMS
     const userId = req.params["id"] as string;
 
-    const userProfile = await prisma.user.findFirstOrThrow({
-      where: { id: userId },
-      select: {
-        id: true,
-        avatarName: true,
-        avatarUrl: true,
-        username: true,
-        email: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
-    return res.status(200).json({ user: userProfile });
+    // CHECK IF DATA IS CASHED
+    const cashedProfile = await redis.get(`profile:${userId}`);
+
+    if (cashedProfile) {
+      // IF DATA IS CASHED, RETURN CASHE
+      const userProfile = JSON.parse(cashedProfile);
+      return res.status(200).json({ user: userProfile, cashed: true });
+    } else {
+      // IF IT'S NOT, STORE THE RESULT OF DB QUERY
+      const userProfile = await prisma.user.findFirstOrThrow({
+        where: { id: userId },
+        select: {
+          id: true,
+          avatarName: true,
+          avatarUrl: true,
+          username: true,
+          email: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      });
+
+      await redis.set(`profile:${userId}`, JSON.stringify(userProfile));
+
+      return res.status(200).json({ user: userProfile, cashed: false });
+    }
   } catch (err) {
     const { errorMessage, code } = errorHandler(err);
     return res.status(code).json({ message: errorMessage });
@@ -31,6 +49,7 @@ export const addAvatar = async (req: Request, res: Response) => {
     const filePath = req.file?.path;
     const fileName = req.file?.filename;
 
+    const redis = RedisService.getClient();
     if (!filePath || !fileName) {
       return res.status(400).json({ message: "Empty file" });
     }
@@ -46,6 +65,8 @@ export const addAvatar = async (req: Request, res: Response) => {
         avatarName: fileName,
       },
     });
+
+    await redis.del(`profile:${userId}`);
 
     return res.status(201).json({ message: "Avatar was updated" });
   } catch (err) {

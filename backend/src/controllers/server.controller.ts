@@ -14,10 +14,14 @@ const generateRandomCode = (): string => {
   ).join("");
 };
 
+// CREATE SERVER
 export const createServer = async (req: Request, res: Response) => {
   try {
+    // CREATE AN INSTANCE OF REDIS CLIENT
+    const redis = RedisService.getClient();
+
     // GET USER FROM REQUEST
-    const user = req.user as User;
+    const userId = req.user.id;
 
     // GET SERVER DATA FROM BODY REQUEST
     const inputServer: CreateServer = createServerSchema.parse(
@@ -27,7 +31,6 @@ export const createServer = async (req: Request, res: Response) => {
     // GET FILE
     const filePath = req.file?.path;
     const fileName = req.file?.filename;
-    console.log(fileName);
 
     // GENERATE JOIN CODE
     const joinCode = generateRandomCode();
@@ -39,36 +42,25 @@ export const createServer = async (req: Request, res: Response) => {
         iconPath: filePath,
         iconName: fileName,
         joinCode,
-        createdBy: { connect: { id: user.id } },
+        createdBy: { connect: { id: userId } },
       },
     });
 
     // JOIN USER TO HIS SERVER
     await prisma.serverJoin.create({
       data: {
-        user: { connect: { id: user.id } },
+        user: { connect: { id: userId } },
         server: { connect: { id: createdServer.id } },
       },
     });
+
+    // CLEAR CASHED SERVERS
+    await redis.del(`joinedServers:${userId}`);
 
     // SEND SUCCESSFUL STATUS
     return res.status(201).json({
       message: `Server ${createdServer.name} has created`,
       server: createdServer,
-    });
-  } catch (err) {
-    const { errorMessage, code } = errorHandler(err);
-    return res.status(code).json({ message: errorMessage });
-  }
-};
-
-// GET ALL SERVERS
-export const getServers = async (req: Request, res: Response) => {
-  try {
-    const foundServers: Server[] = await prisma.server.findMany();
-
-    return res.status(200).json({
-      servers: foundServers,
     });
   } catch (err) {
     const { errorMessage, code } = errorHandler(err);
@@ -97,10 +89,19 @@ export const getServerById = async (req: Request, res: Response) => {
 // JOIN USER TO A SERVER
 export const joinToServer = async (req: Request, res: Response) => {
   try {
-    const user = req.user as User;
-    const userId = user.id;
+    // GET USER ID FROM AUTH HEADER
+    const userId = req.user.id;
+
+    // GET JOIN CODE FROM THE PARAM
     const joinCode = req.params["joinCode"];
 
+    // CREATE AN INSTANCE OF REDIS CLIENT
+    const redis = RedisService.getClient();
+
+    // CLEAR CASHED SERVERS
+    await redis.del(`joinedServers:${userId}`);
+
+    // FIND SERVER
     const server = await prisma.server.findFirstOrThrow({
       where: { joinCode },
       include: {
@@ -115,6 +116,9 @@ export const joinToServer = async (req: Request, res: Response) => {
         user: { connect: { id: userId } },
       },
     });
+
+    // CLEAR CASHE OF SERVER MEMBERS
+    await redis.del(`members:${server.id}`);
 
     return res
       .status(200)
@@ -132,41 +136,45 @@ export const getJoinedServers = async (req: Request, res: Response) => {
     const redis = RedisService.getClient();
 
     // GET USER ID FROM AUTH HEADER
-    const user = req.user as User;
-    const userId = user.id;
+    const userId = req.user.id;
 
-    // CHRCK IF DATA IS ALREADY CASHED
     const cashedServers = await redis.get(`joinedServers:${userId}`);
 
     if (cashedServers) {
       // IF DATA IS CASHED, RETURN CASHE
-      console.log("get data from cashe");
       const servers = JSON.parse(cashedServers);
-      return res.status(200).json({ servers });
-    } else {
-      console.log("get data from prisma");
-      // IF IT'S NOT, STORE THE RESULT OF DB QUERY
-      const foundJoinedServers = await prisma.serverJoin.findMany({
-        where: { userId: userId },
-        select: {
-          server: true,
-        },
-      });
-
-      // const servers
-      const servers: Server[] = foundJoinedServers.reduce(
-        (acc: any, { server }) => {
-          acc[server.id] = server;
-          return acc;
-        },
-        {}
-      );
-
-      await redis.set(`joinedServers:${userId}`, JSON.stringify(servers));
-      return res.status(200).json({
-        servers,
-      });
+      return res.status(200).json({ servers, cashed: true });
     }
+
+    // MAKE A QUERY
+    const foundJoinedServers = await prisma.serverJoin.findMany({
+      where: { userId },
+      select: {
+        server: true,
+      },
+    });
+
+    // RETURN THE ARRAY OF JOINED SERVERS
+    const servers: Server[] = foundJoinedServers.reduce(
+      (acc: any, { server }) => {
+        acc[server.id] = server;
+        return acc;
+      },
+      {}
+    );
+
+    // CASHE THE RESULT OF THE QUERY
+    await redis.set(
+      `joinedServers:${userId}`,
+      JSON.stringify(servers),
+      "EX",
+      60 * 60 * 3,
+      "NX"
+    );
+    return res.status(200).json({
+      servers,
+      cashed: false,
+    });
   } catch (err) {
     const { errorMessage, code } = errorHandler(err);
     return res.status(code).json({ message: errorMessage });
@@ -176,8 +184,22 @@ export const getJoinedServers = async (req: Request, res: Response) => {
 // GET ARRAY OF MEMBERS OF THE SERVER BY ID
 export const getMembers = async (req: Request, res: Response) => {
   try {
+    // CREATE AN INSTANCE OF REDIS CLIENT
+    // const redis = RedisService.getClient();
+
+    // GET SERVER ID FROM PARAMS
     const serverId = req.params["serverId"];
 
+    // CHECK IF DATA IS CASHED
+    // const cahsedData = await redis.get(`members:${serverId}`);
+
+    // IF DATA IS CASHED, SEND CASHE
+    // if (cahsedData) {
+    //   const joinedUsers = JSON.parse(cahsedData);
+    //   return res.status(200).json({ members: joinedUsers, cashe: true });
+    // }
+
+    // GET usersJoined RECORD BY SERVER ID
     const usersJoined = await prisma.serverJoin.findMany({
       where: {
         serverId: serverId,
@@ -187,8 +209,20 @@ export const getMembers = async (req: Request, res: Response) => {
       },
     });
 
+    // CASHE DATA
+    // await redis.set(
+    //   `members:${serverId}`,
+    //   JSON.stringify(usersJoined),
+    //   "EX",
+    //   60 * 60 * 3,
+    //   "NX"
+    // );
+
+    // RETURN ARRAY OF USERS
     const joinedUsers = usersJoined.map((join) => join.user);
-    res.status(200).json({ members: joinedUsers });
+
+    // SEND DATA
+    return res.status(200).json({ members: joinedUsers, cashe: false });
   } catch (err) {
     const { errorMessage, code } = errorHandler(err);
     return res.status(code).json({ message: errorMessage });

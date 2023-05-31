@@ -4,7 +4,7 @@ import { io } from "socket.io-client";
 import { ref, type Ref } from "vue";
 
 export const useSocketStore = defineStore("socket", () => {
-  const URL = "http://localhost:3333";
+  const URL = import.meta.env.VITE_API_URL;
 
   const socket = io(URL, {
     autoConnect: true,

@@ -2,50 +2,42 @@ import { Chanel, PrismaClient, User } from "@prisma/client";
 import { Request, Response } from "express";
 import { errorHandler } from "../utils/errorsHandler";
 import { CreateChanel, createChanelSchema } from "../types/channel.type";
+import RedisService from "../utils/redis";
 import { log } from "console";
 const prisma = new PrismaClient();
 
 export const createChan = async (req: Request, res: Response) => {
   try {
-    const user = req.user as User;
+    // CREATE AN INSTANCE OF REDIS CLIENT
+    const redis = RedisService.getClient();
+
+    const userId = req.user.id;
     const inputChanel: CreateChanel = createChanelSchema.parse(req.body);
 
     // Check if user is server owner
     const category = await prisma.category.findFirstOrThrow({
       where: { id: inputChanel.categoryId },
-      select: { creatorId: true },
+      select: { creatorId: true, serverId: true },
     });
 
-    if (category.creatorId != user.id)
+    if (category.creatorId != userId)
       return res.status(401).json({ message: "User is not an owner" });
 
     const createdChanel = await prisma.chanel.create({
       data: {
         name: inputChanel.name,
-        createdBy: { connect: { id: user.id } },
+        createdBy: { connect: { id: userId } },
         category: { connect: { id: inputChanel.categoryId } },
       },
     });
+
+    // CLEAR CASHE
+    await redis.del(`categories:${category.serverId}`);
 
     return res.status(201).json({
       message: `Chanel ${createdChanel.name} has created`,
       data: {
         chanel: createdChanel,
-      },
-    });
-  } catch (err) {
-    const { errorMessage, code } = errorHandler(err);
-    return res.status(code).json({ message: errorMessage });
-  }
-};
-
-export const getChans = async (req: Request, res: Response) => {
-  try {
-    const foundChanel: Chanel[] = await prisma.chanel.findMany();
-
-    return res.status(200).json({
-      data: {
-        categories: foundChanel,
       },
     });
   } catch (err) {

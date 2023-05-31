@@ -5,6 +5,7 @@ import axios, { AxiosError } from "axios";
 import { ZodError } from "zod";
 import { signUpSchema, type SignUpInput } from "@/types/signUp.type";
 import router from "@/router";
+import jwt_decode from "jwt-decode";
 
 export const useAuthStore = defineStore("auth", () => {
   // JWT TOKEN
@@ -29,7 +30,7 @@ export const useAuthStore = defineStore("auth", () => {
       const response = await axios.post(`${apiUrl}/auth/signIn`, inputCreds);
 
       token.value = response.data.token as string;
-      console.log(response.data);
+
       userId.value = response.data.id;
 
       localStorage.setItem("userId", userId.value);
@@ -88,8 +89,24 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   function isLogin() {
-    if (!localStorage.getItem("jwt")) return false;
-    return true;
+    return localStorage.getItem("jwt") ? true : false;
+  }
+
+  function isTokenExpired() {
+    const token = localStorage.getItem("jwt");
+
+    if (!token) return false;
+
+    const decoded: any = jwt_decode(token);
+
+    // Convert the token into a JavaScript Date object
+    const expirationDate = new Date(decoded.exp * 1000);
+
+    // Get the current time
+    const currentTime = new Date();
+
+    // Compare the expiration time with the current time
+    return expirationDate.getTime() < currentTime.getTime();
   }
 
   function handleLogOut() {
@@ -107,5 +124,6 @@ export const useAuthStore = defineStore("auth", () => {
     errorMessage,
     token,
     handleLogOut,
+    isTokenExpired,
   };
 });

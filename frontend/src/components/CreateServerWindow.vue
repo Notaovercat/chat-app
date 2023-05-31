@@ -3,8 +3,8 @@ import { useServerStore } from "@/stores/servers";
 import type { CreateServerInput } from "@/types/server.type";
 import { reactive, ref, type Ref } from "vue";
 import router from "@/router";
-const serverStore = useServerStore();
 
+const serverStore = useServerStore();
 const serverInput: CreateServerInput = reactive({ name: "" });
 const serverEnterCode = ref("");
 const fileInput: Ref<File | undefined> = ref();

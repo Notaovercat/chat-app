@@ -89,7 +89,7 @@ io.of("/").on("connect", (socket) => {
     }
   });
 
-  socket.on("getMessages", async (chanelId: string) => {
+  socket.on("getMessages", async (chanelId: string, page: number = 0) => {
     console.log("Load messages for", chanelId);
     const messages = await prisma.message
       .findMany({
@@ -104,6 +104,8 @@ io.of("/").on("connect", (socket) => {
         orderBy: {
           createdAt: "asc",
         },
+        // take: 10,
+        // skip: 3,
       })
       .catch((err) => {
         console.error(err);
@@ -119,6 +121,7 @@ io.of("/").on("connect", (socket) => {
       const foundMessage = await prisma.message
         .findFirstOrThrow({ where: { id: messageId } })
         .catch((err) => console.log(err));
+
       if (socket.request.user.id != foundMessage?.creatorId)
         throw new Error("Unauthorized");
 
@@ -169,10 +172,6 @@ io.of("/").on("connect", (socket) => {
   });
 });
 
-process.on("SIGINT", () => {
-  RedisService.closeConnection();
-  process.exit();
-});
 // START SERVER
 server.listen(port, () => {
   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
