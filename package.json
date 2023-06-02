@@ -14,5 +14,8 @@
     "dev:front": "yarn workspace frontend dev",
     "prisma:studio": "yarn workspace backend npx prisma studio",
     "prisma:migrate": "yarn workspace backend npx prisma migrate dev"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
   }
 }
