@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import ChanelList from "@/components/ChanelList.vue";
-import ServerBar from "@/components/ServerBar.vue";
+import ServerBar from "@/components/Servers/ServerBar.vue";
 import { useSideBarStore } from "@/stores/sideBar";
-import Profile from "@/components/Profile.vue";
+import Profile from "@/components/Additional/Profile.vue";
 import { useProfileStore } from "@/stores/profile";
 import { ref, onMounted } from "vue";
-import CreateServerWindow from "@/components/CreateServerWindow.vue";
-import ChangeAvatar from "@/components/ChangeAvatar.vue";
+import CreateServerWindow from "@/components/Servers/CreateServerWindow.vue";
+import ChangeAvatar from "@/components/Additional/ChangeAvatar.vue";
 
 const profileStore = useProfileStore();
 const userId = ref("");
@@ -20,18 +19,18 @@ const sideBarStore = useSideBarStore();
 <template>
   <div class="flex flex-row">
     <div class="fixed bottom-0 left-0 top-0 z-20 min-h-screen">
-      <!-- <ShowBarButton /> -->
-      <ServerBar v-if="sideBarStore.showBar" />
+      <Suspense>
+        <ServerBar v-if="sideBarStore.showBar" />
+        <template #fallback> Loading... </template>
+      </Suspense>
     </div>
-    <div class="fixed bottom-0 left-0 top-0 z-10 ml-[3.6rem] min-h-screen">
-      <!-- <ChanelList v-if="sideBarStore.showBar" /> -->
-    </div>
+    <div
+      class="fixed bottom-0 left-0 top-0 z-10 ml-[3.6rem] min-h-screen"
+    ></div>
   </div>
   <div
     class="mx-auto my-4 flex min-h-[80%] w-full items-center md:ml-[19rem] md:mr-4 md:w-10/12"
-  >
-    <!-- <RouterView name="chat" /> -->
-  </div>
+  ></div>
 
   <Suspense>
     <Profile v-if="profileStore.showProfile" :userId="userId" :isUser="true" />

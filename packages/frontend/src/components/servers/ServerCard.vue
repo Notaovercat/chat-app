@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Server } from "@/types/server.type";
-import { reactive, ref, type Ref } from "vue";
+import { reactive } from "vue";
 
 interface ServerCardProps {
   server: Server;

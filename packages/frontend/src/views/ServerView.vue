@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import ChanelList from "@/components/ChanelList.vue";
-import ServerBar from "@/components/ServerBar.vue";
+import ChanelList from "@/components/Chanels/ChanelList.vue";
+import ServerBar from "@/components/Servers/ServerBar.vue";
 import { useSideBarStore } from "@/stores/sideBar";
-import Profile from "@/components/Profile.vue";
+import Profile from "@/components/Additional/Profile.vue";
 import { useProfileStore } from "@/stores/profile";
 import { ref, onMounted } from "vue";
-import CreateServerWindow from "@/components/CreateServerWindow.vue";
-import ChangeAvatar from "@/components/ChangeAvatar.vue";
+import CreateServerWindow from "@/components/Servers/CreateServerWindow.vue";
+import ChangeAvatar from "@/components/Additional/ChangeAvatar.vue";
 
 const profileStore = useProfileStore();
 const userId = ref("");

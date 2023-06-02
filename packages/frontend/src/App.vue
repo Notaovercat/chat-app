@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RouterView } from "vue-router";
-import ReloadPWA from "./components/ReloadPWA.vue";
+import ReloadPWA from "@/components/Additional/ReloadPWA.vue";
 </script>
 
 <template>

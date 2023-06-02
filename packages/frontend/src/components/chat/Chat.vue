@@ -11,8 +11,8 @@ import {
   type Ref,
 } from "vue";
 import { useRoute } from "vue-router";
-import ObserverBottom from "./ObserverBottom.vue";
-import ObserverTop from "./ObserverTop.vue";
+import ObserverBottom from "@/components/Chat/ObserverBottom.vue";
+import ObserverTop from "@/components/Chat/ObserverTop.vue";
 
 const route = useRoute();
 const socketStore = useSocketStore();

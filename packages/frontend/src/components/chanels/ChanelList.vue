@@ -5,9 +5,9 @@ import type { Category } from "@/types/category.type";
 import { ref, watch, type Ref, onMounted, onBeforeMount } from "vue";
 import { useRoute } from "vue-router";
 import type { Server } from "@/types/server.type";
-import CreateCategory from "./CreateCategory.vue";
-import CreateChanel from "./CreateChanel.vue";
-import ChanelItem from "./ChanelItem.vue";
+import CreateCategory from "@/components/Chanels/CreateCategory.vue";
+import CreateChanel from "@/components/Chanels/CreateChanel.vue";
+import ChanelItem from "@/components/Chanels/ChanelItem.vue";
 const route = useRoute();
 
 const catsStore = useCatsStore();
