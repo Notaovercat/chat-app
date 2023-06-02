@@ -1,6 +1,5 @@
 {
   "extends": "@vue/tsconfig/tsconfig.web.json",
-  "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
   "compilerOptions": {
     "strict": true,
     "ignoreDeprecations": "5.0",
@@ -8,7 +7,7 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "types": ["node"],
+    "types": ["node", "vite-plugin-pwa/client"],
     "lib": ["ESNext", "DOM", "WebWorker"]
   },
   "exclude": [
@@ -19,6 +18,7 @@
     "**/*.spec.ts",
     "**/*.worker.ts"
   ],
+  "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
   "references": [
     {
       "path": "./tsconfig.node.json"

@@ -10,8 +10,12 @@
     "packages/*"
   ],
   "scripts": {
+    "start:dev": "concurrently \"yarn dev:back\" \"yarn dev:front\"",
     "dev:back": "yarn workspace backend dev",
     "dev:front": "yarn workspace frontend dev",
+    "build:back": "yarn workspace backend build",
+    "build:front": "yarn workspace frontend build",
+    "build:all": "run-p build:back build:front",
     "prisma:studio": "yarn workspace backend npx prisma studio",
     "prisma:migrate": "yarn workspace backend npx prisma migrate dev"
   },
