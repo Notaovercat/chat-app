@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useCatsStore } from "@/stores/categories";
-import { onMounted, onUpdated, reactive, ref } from "vue";
+import { reactive, ref } from "vue";
 import { useServerStore } from "@/stores/servers";
 
 const serverStore = useServerStore();

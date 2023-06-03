@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
 import AuthView from "@/views/AuthView.vue";
 import ServerView from "@/views/ServerView.vue";
-import Chat from "@/components/Chat/Chat.vue";
+import Chat from "@/components/chat/Chat.vue";
 import { jwtGuard } from "./guards/jwtGuard";
 import { memberCheck } from "./guards/memberGuard";
 import { loginGuard } from "./guards/loginGuard";

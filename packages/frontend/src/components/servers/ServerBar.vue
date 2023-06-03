@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ServerList from "@/components/Servers/ServerList.vue";
+import ServerList from "@/components/servers/ServerList.vue";
 </script>
 
 <template>

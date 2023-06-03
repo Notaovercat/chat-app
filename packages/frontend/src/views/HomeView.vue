@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import ServerBar from "@/components/Servers/ServerBar.vue";
+import ServerBar from "@/components/servers/ServerBar.vue";
 import { useSideBarStore } from "@/stores/sideBar";
-import Profile from "@/components/Additional/Profile.vue";
+import Profile from "@/components/additional/Profile.vue";
 import { useProfileStore } from "@/stores/profile";
 import { ref, onMounted } from "vue";
-import CreateServerWindow from "@/components/Servers/CreateServerWindow.vue";
-import ChangeAvatar from "@/components/Additional/ChangeAvatar.vue";
+import CreateServerWindow from "@/components/servers/CreateServerWindow.vue";
+import ChangeAvatar from "@/components/additional/ChangeAvatar.vue";
 
 const profileStore = useProfileStore();
 const userId = ref("");

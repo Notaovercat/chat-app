@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import ServerName from "@/components/Servers/ServerName.vue";
+import ServerName from "@/components/servers/ServerName.vue";
 import type { Server } from "@/types/server.type";
 import router from "@/router";
 

@@ -11,27 +11,55 @@ import {
   type Ref,
 } from "vue";
 import { useRoute } from "vue-router";
-import ObserverBottom from "@/components/Chat/ObserverBottom.vue";
-import ObserverTop from "@/components/Chat/ObserverTop.vue";
+import ObserverBottom from "@/components/chat/ObserverBottom.vue";
+import ObserverTop from "@/components/chat/ObserverTop.vue";
 
+// INITIALIZE ROUTE
 const route = useRoute();
+
+// INITIALIZE SOCKET STORE
 const socketStore = useSocketStore();
+
+// COMPUTE MESSAGES FROM SOCKET STORE
 const messages: ComputedRef<Message[]> = computed(() => socketStore.messages);
+
+// INITIALIZE MESSAGE WINDOW HTML COMPONENT
 const messageListRef = ref<HTMLElement | null>(null);
+
+// GET USER ID FROM LOCAL STORAGE
 const userId = ref(localStorage.getItem("userId"));
+
+// INITIALIZE MESSAGE INPUT REFERENCE
 const messageInput = ref("");
+
+// INITIALIZE HOVERED MESSAGE REFERENCE
 const hoveredMessage: Ref<string | null> = ref("");
+
+// INITIALIZE EDIT MODE REFERENCE
 const editMode = ref(false);
+
+// INITIALIZE EDIT CONTENT REFERENCE
 const editContent = ref("");
+
+// GET API URL FROM ENV
 const aip_url = ref(import.meta.env.VITE_API_URL);
+
+// INITIALIZE BOTTOM
 const isBottom = ref(false);
+
+// INITIALIZE TOP
 const isTop = ref(false);
+
+// INITIALIZE MOBILE STATE
 const mobileState = ref(false);
+
+// EDIT MESSAGE
 const onEditMode = (content: string) => {
   editMode.value = true;
   editContent.value = content;
 };
 
+// SEND MESSAGE
 const onSend = () => {
   socketStore.sendMessage({
     chanelId: route.params.chatId as string,
@@ -41,21 +69,25 @@ const onSend = () => {
   setTimeout(() => scrollToBottom(), 100);
 };
 
+// UPDATE MESSAGE
 const onUpdate = (msgId: string, content: string) => {
   socketStore.updateMessage(route.params.chatId as string, msgId, content);
   editMode.value = false;
 };
 
+// DELETE MESSAGE
 const onDelete = (msgId: string) => {
   socketStore.deleteMessage(route.params.chatId as string, msgId);
   editMode.value = false;
 };
 
+// JOIN CHANNEL WHEN COMPONENT MOUNTS
 onMounted(() => {
   socketStore.joinToChanel(route.params.chatId as string);
   setTimeout(() => scrollToBottom(), 200);
 });
 
+// WATCH CHAT ID AND JOIN OR LEAVE CHANNEL ACCORDINGLY
 watch(
   () => route.params.chatId as string,
   (newChatId, oldChatId) => {
@@ -69,6 +101,7 @@ watch(
   }
 );
 
+// WATCH FOR NEW MESSAGES AND SCROLL TO BOTTOM IF NECESSARY
 watch(
   () => socketStore.messages.length,
   () => {
@@ -76,25 +109,32 @@ watch(
   }
 );
 
+// LEAVE CHANNEL WHEN COMPONENT UNMOUNTS
 onBeforeUnmount(() => {
   socketStore.leaveChanel(route.params.chatId as string);
 });
 
+// FUNCTION TO SCROLL TO BOTTOM
 const scrollToBottom = () => {
   const messageList = messageListRef.value;
   if (messageList) {
     messageList.scrollTop = messageList.scrollHeight;
   }
+  // const msgInput = inputBar.value;
+  // if (msgInput) {
+  //   msgInput.scrollTop = msgInput.scrollHeight;
+  // }
 };
 
+// FUNCTION TO SCROLL TO HALF BOTTOM
 const scrollToHalfBottom = () => {
   const messageList = messageListRef.value;
   if (messageList) {
-    // console.log(messageList.scrollTop, messageList.scrollHeight);
     messageList.scrollTop = messageList.scrollHeight / 2;
   }
 };
 
+// WATCH FOR SCROLLING TO TOP AND LOAD PREVIOUS MESSAGES IF NECESSARY
 watch(
   () => isTop.value,
   () => {
@@ -107,14 +147,10 @@ watch(
 </script>
 
 <template>
-  <div class="mx-2 mt-10 flex h-full w-full flex-col md:mt-0">
-    <!-- <div
-      class="-z-10 h-screen w-full overflow-y-scroll rounded-lg bg-slate-50 md:-z-0 md:h-[900px]"
-      ref="messageListRef"
-    > -->
+  <div class="mx-2 mt-10 flex h-full w-full flex-col p-4 md:mt-0 md:p-8">
     <div class="flex-grow overflow-y-auto rounded-lg bg-slate-50">
       <div
-        class="-z-10 h-screen max-h-[900px] w-full overflow-y-scroll rounded-lg bg-slate-50 md:-z-0 md:h-[900px]"
+        class="-z-10 h-screen max-h-[790px] w-full overflow-y-scroll rounded-lg bg-slate-50 md:-z-0 md:h-[900px]"
         ref="messageListRef"
       >
         <ObserverTop @intersect="isTop = $event" />
@@ -155,7 +191,7 @@ watch(
 
             <!-- MESSAGE -->
             <div
-              class="relative ml-3 flex w-full flex-wrap rounded-xl bg-white px-4 py-4 pb-10 text-sm shadow-sm"
+              class="relative ml-3 flex w-full flex-wrap rounded-xl bg-white px-4 py-4 pb-8 text-sm shadow-sm"
               @mouseenter="if (!editMode) hoveredMessage = message.id;"
               @mouseleave="if (!editMode) hoveredMessage = null;"
               @touchstart="
@@ -324,7 +360,7 @@ watch(
     </div>
 
     <!-- MESSAGE INPUT -->
-    <div class="mt-4 flex">
+    <div class="fixed bottom-0 flex w-full">
       <input
         class="h-10 w-full rounded-md bg-blue-100 px-3 text-slate-900 outline-none"
         placeholder="Type message here..."
@@ -332,7 +368,7 @@ watch(
       />
 
       <button
-        class="ml-3 h-10 w-32 rounded-md bg-blue-700 text-white"
+        class="mb-3 ml-3 h-10 w-32 rounded-md bg-blue-700 text-white"
         @click="onSend()"
       >
         Send

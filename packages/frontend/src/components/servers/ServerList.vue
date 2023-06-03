@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import ServerSideIcon from "@/components/Servers/ServerSideIcon.vue";
-import UserButton from "@/components/Additional/UserButton.vue";
-import CreateServerButton from "@/components/Servers/CreateServerButton.vue";
+import ServerSideIcon from "@/components/servers/ServerSideIcon.vue";
+import UserButton from "@/components/additional/UserButton.vue";
+import CreateServerButton from "@/components/servers/CreateServerButton.vue";
 import type { Server } from "@/types/server.type";
 import { useProfileStore } from "@/stores/profile";
 import { useServerStore } from "@/stores/servers";
