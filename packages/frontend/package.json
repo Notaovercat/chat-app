@@ -16,6 +16,7 @@
     "pwa-asset-generator": "^6.3.1",
     "socket.io-client": "^4.6.1",
     "vite-plugin-pwa": "^0.16.1",
+    "vite-plugin-rewrite-all": "^1.0.1",
     "vue": "^3.2.47",
     "vue-router": "^4.1.6",
     "vue3-touch-events": "^4.1.2",

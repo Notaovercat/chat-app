@@ -28,7 +28,7 @@ const server = http.createServer(app);
 // CREATE SOCKET SERVER
 const io = new SocketServer(server, {
   cors: {
-    origin: process.env.CORS_ORIGIN as string,
+    origin: "*",
   },
 });
 
@@ -90,6 +90,7 @@ io.of("/").on("connect", (socket) => {
 
   socket.on("getMessages", async (chanelId: string, page: number = 0) => {
     console.log("Load messages for", chanelId);
+    const messagesCount = await prisma.message.count({ where: { chanelId } });
     const messages = await prisma.message
       .findMany({
         where: {
@@ -123,7 +124,11 @@ io.of("/").on("connect", (socket) => {
       >
     ).reverse();
 
-    io.to(chanelId).emit("onGetMessages", reversedMessages);
+    const hasMore = page + reversedMessages.length <= messagesCount;
+
+    hasMore
+      ? socket.emit("onGetMessages", reversedMessages)
+      : socket.emit("onEmpty");
   });
 
   socket.on(

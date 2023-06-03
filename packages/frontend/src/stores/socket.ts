@@ -10,6 +10,7 @@ export const useSocketStore = defineStore("socket", () => {
   // PAGE FOR LOADING PREVIOUS MESSAGES
   // NEGATIVE VALUE FOR INIT
   let page = 0;
+  const isHasMore = ref(true);
 
   // CONNECT TO SOCKET SERVER
   const socket = io(URL, {
@@ -23,9 +24,13 @@ export const useSocketStore = defineStore("socket", () => {
   const messages: Ref<Message[]> = ref([]);
 
   // ADD MESSAGES TO THE ARRAY
-  socket.on("onGetMessages", (data) => {
+  socket.on("onGetMessages", (data: Message[]) => {
+    isHasMore.value = true;
     messages.value.unshift(...data);
-    // console.log(messages.value);
+  });
+
+  socket.on("onEmpty", () => {
+    isHasMore.value = false;
   });
 
   // ADD SENDED MESSAGE TO THE ARRAY
@@ -62,6 +67,7 @@ export const useSocketStore = defineStore("socket", () => {
     // CLEAR ARRAY FOR NEW CHANEL
     messages.value = [];
     page = 0;
+    isHasMore.value = true;
   }
 
   function sendMessage(message: CreateMessage) {
@@ -85,5 +91,6 @@ export const useSocketStore = defineStore("socket", () => {
     updateMessage,
     deleteMessage,
     onLoadPrevMsgs,
+    isHasMore,
   };
 });

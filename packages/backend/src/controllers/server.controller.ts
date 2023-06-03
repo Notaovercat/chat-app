@@ -190,15 +190,6 @@ export const getMembers = async (req: Request, res: Response) => {
     // GET SERVER ID FROM PARAMS
     const serverId = req.params["serverId"];
 
-    // CHECK IF DATA IS CASHED
-    // const cahsedData = await redis.get(`members:${serverId}`);
-
-    // IF DATA IS CASHED, SEND CASHE
-    // if (cahsedData) {
-    //   const joinedUsers = JSON.parse(cahsedData);
-    //   return res.status(200).json({ members: joinedUsers, cashe: true });
-    // }
-
     // GET usersJoined RECORD BY SERVER ID
     const usersJoined = await prisma.serverJoin.findMany({
       where: {
@@ -208,15 +199,6 @@ export const getMembers = async (req: Request, res: Response) => {
         user: true,
       },
     });
-
-    // CASHE DATA
-    // await redis.set(
-    //   `members:${serverId}`,
-    //   JSON.stringify(usersJoined),
-    //   "EX",
-    //   60 * 60 * 3,
-    //   "NX"
-    // );
 
     // RETURN ARRAY OF USERS
     const joinedUsers = usersJoined.map((join) => join.user);

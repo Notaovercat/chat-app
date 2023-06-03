@@ -27,13 +27,12 @@ const opts: StrategyOptions = {
 // STRATEGY
 export const jwtStrategy = new JwtStrategy(opts, async (payload, done) => {
   try {
-    const foundUser: User = await prisma.user.findUniqueOrThrow({
+    const foundUser = await prisma.user.findUnique({
       where: { id: payload.id },
     });
 
-    const user = exclude(foundUser, ["password"]);
-
-    if (user) {
+    if (foundUser) {
+      const user = exclude(foundUser, ["password"]);
       return done(null, user);
     } else {
       return done(null, false);

@@ -16,12 +16,12 @@
     "build:all": "run-p build:back build:front",
     "build:back": "yarn workspace backend build",
     "build:front": "yarn workspace frontend build",
-    "start:back": "yarn workspace backend http-server dist",
-    "start:front": "yarn workspace frontend http-server dist",
-    "prisma:studio": "yarn workspace backend npx prisma studio",
-    "prisma:migrate": "yarn workspace backend npx prisma migrate dev"
+    "start:back": "yarn workspace backend serve -s dist",
+    "start:front": "serve -s packages/frontend/dist",
+    "prisma:studio": "yarn workspace backend prisma studio",
+    "prisma:migrate": "yarn workspace backend prisma migrate dev"
   },
   "devDependencies": {
-    "http-server": "^14.1.1"
+    "serve": "^14.2.0"
   }
 }

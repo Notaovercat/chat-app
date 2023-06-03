@@ -12,6 +12,7 @@ import { upload } from "../utils/multerConfig";
 const router = express();
 
 router.use(passport.authenticate("jwt", { session: false }));
+
 router.get("/id/:id", getServerById);
 router.post("/", upload.single("image"), createServer);
 router.get("/joined", getJoinedServers);

@@ -105,7 +105,8 @@ watch(
 watch(
   () => socketStore.messages.length,
   () => {
-    if (isBottom.value) setTimeout(() => scrollToBottom(), 200);
+    if (isBottom.value && socketStore.isHasMore)
+      setTimeout(() => scrollToBottom(), 200);
   }
 );
 
@@ -120,10 +121,6 @@ const scrollToBottom = () => {
   if (messageList) {
     messageList.scrollTop = messageList.scrollHeight;
   }
-  // const msgInput = inputBar.value;
-  // if (msgInput) {
-  //   msgInput.scrollTop = msgInput.scrollHeight;
-  // }
 };
 
 // FUNCTION TO SCROLL TO HALF BOTTOM
@@ -138,10 +135,15 @@ const scrollToHalfBottom = () => {
 watch(
   () => isTop.value,
   () => {
-    if (isTop.value) {
-      socketStore.onLoadPrevMsgs(route.params.chatId as string);
-      setTimeout(() => scrollToHalfBottom(), 200);
-    }
+    setTimeout(() => {
+      if (isTop.value && socketStore.isHasMore) {
+        scrollToHalfBottom();
+        setTimeout(
+          () => socketStore.onLoadPrevMsgs(route.params.chatId as string),
+          200
+        );
+      }
+    }, 500);
   }
 );
 </script>
