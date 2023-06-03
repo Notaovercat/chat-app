@@ -18,13 +18,16 @@ const sideBarStore = useSideBarStore();
 </script>
 
 <template>
-  <div class="flex flex-row md:mr-[18rem]">
+  <div class="flex flex-row">
+    <!-- SERVER BAR -->
     <div class="fixed bottom-0 left-0 top-0 z-20 min-h-screen">
       <Suspense>
         <ServerBar v-if="sideBarStore.showBar" />
         <template #fallback> Loading... </template>
       </Suspense>
     </div>
+
+    <!-- CHANELS BAR -->
     <div class="fixed bottom-0 left-0 top-0 z-10 ml-[3.6rem] min-h-screen">
       <Suspense>
         <ChanelList v-if="sideBarStore.showBar" />
@@ -32,12 +35,13 @@ const sideBarStore = useSideBarStore();
       </Suspense>
     </div>
   </div>
-  <div
-    class="mx-auto my-4 flex min-h-[80%] w-full items-center md:ml-[18rem] md:mr-3 md:h-auto md:w-auto"
-  >
+
+  <!-- CHAT WINDOW -->
+  <div class="ml-0 flex md:ml-72">
     <RouterView name="chat" />
   </div>
 
+  <!-- OTHER WINDOWS -->
   <Suspense>
     <Profile v-if="profileStore.showProfile" :userId="userId" :isUser="true" />
     <template #fallback> Loading... </template>

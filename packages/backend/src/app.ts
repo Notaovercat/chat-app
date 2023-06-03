@@ -16,7 +16,7 @@ const app: Express = express();
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(cors({ origin: process.env.CORS_ORIGIN as string }));
 app.use(express.static(path.join(__dirname, "../public")));
 // AUTH
 app.use(passport.initialize());
@@ -28,5 +28,9 @@ app.use("/servers", serverRouter);
 app.use("/categories", categoryRouter);
 app.use("/user", userRouter);
 app.use("/chanels", chanelRouter);
+
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "../public", "index.html"));
+});
 
 export default app;

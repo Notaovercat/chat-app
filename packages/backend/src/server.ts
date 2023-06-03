@@ -5,7 +5,6 @@ import passport from "passport";
 import { Socket, Server as SocketServer } from "socket.io";
 import { Message, PrismaClient, User } from "@prisma/client";
 import { CreateMessage } from "./types/message.type";
-import RedisService from "./utils/redis";
 
 // ADD USER TO SOCKET'S REQUEST
 declare module "http" {
@@ -29,7 +28,7 @@ const server = http.createServer(app);
 // CREATE SOCKET SERVER
 const io = new SocketServer(server, {
   cors: {
-    origin: "*",
+    origin: process.env.CORS_ORIGIN as string,
   },
 });
 

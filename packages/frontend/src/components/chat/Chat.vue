@@ -148,15 +148,14 @@ watch(
 
 <template>
   <div class="mx-2 mt-10 flex h-full w-full flex-col p-4 md:mt-0 md:p-8">
-    <div class="flex-grow overflow-y-auto rounded-lg bg-slate-50">
+    <!-- CHAT WINDOW -->
+    <div class="w-full flex-grow overflow-y-auto rounded-lg bg-slate-50">
       <div
-        class="-z-10 h-screen max-h-[790px] w-full overflow-y-scroll rounded-lg bg-slate-50 md:-z-0 md:h-[900px]"
+        class="-z-10 mb-16 h-[600px] w-full overflow-y-scroll scroll-smooth rounded-lg bg-slate-50 md:-z-0 md:mb-0 md:h-full md:max-h-[880px]"
         ref="messageListRef"
       >
         <ObserverTop @intersect="isTop = $event" />
-
-        <!-- CHAT WINDOW -->
-        <div v-for="message of messages.slice()" :key="message.id">
+        <div class="" v-for="message of messages.slice()" :key="message.id">
           <div class="m-5 flex flex-row items-center">
             <!-- USER AVATAR -->
 
@@ -356,23 +355,25 @@ watch(
           </div>
         </div>
         <ObserverBottom @intersect="isBottom = $event" />
+
+        <!-- MESSAGE INPUT -->
+        <div
+          class="fixed bottom-0 box-border flex w-11/12 flex-grow md:pr-[300px]"
+        >
+          <input
+            class="h-10 w-full rounded-md bg-blue-100 px-3 text-slate-900 outline-none"
+            placeholder="Type message here..."
+            v-model="messageInput"
+          />
+
+          <button
+            class="mb-3 ml-3 h-10 w-auto rounded-md bg-blue-700 px-1 text-white md:mr-auto md:px-5"
+            @click="onSend()"
+          >
+            Send
+          </button>
+        </div>
       </div>
-    </div>
-
-    <!-- MESSAGE INPUT -->
-    <div class="fixed bottom-0 flex w-full">
-      <input
-        class="h-10 w-full rounded-md bg-blue-100 px-3 text-slate-900 outline-none"
-        placeholder="Type message here..."
-        v-model="messageInput"
-      />
-
-      <button
-        class="mb-3 ml-3 h-10 w-32 rounded-md bg-blue-700 text-white"
-        @click="onSend()"
-      >
-        Send
-      </button>
     </div>
   </div>
 </template>

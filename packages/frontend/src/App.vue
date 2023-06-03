@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { RouterView } from "vue-router";
-import ReloadPWA from "@/components/Additional/ReloadPWA.vue";
+// import ReloadPWA from "@/components/additional/ReloadPWA.vue";
 </script>
 
 <template>
-  <ReloadPWA />
+  <!-- <ReloadPWA /> -->
   <RouterView />
 </template>

@@ -44,15 +44,11 @@ const pwaConfig = VitePWA({
       },
     ],
   },
-  devOptions: {
-    enabled: true,
-    type: "module",
-  },
 });
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue(), pwaConfig],
+  plugins: [vue()],
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
