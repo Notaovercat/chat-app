@@ -36,7 +36,7 @@ export const createCat = async (req: Request, res: Response) => {
       },
     });
 
-    // CLEAR CASHE
+    // CLEAR CACHE
     await redis.del(`categories:${inputCategory.serverId}`);
 
     // SEND DATA
@@ -78,15 +78,15 @@ export const getCatsByServer = async (req: Request, res: Response) => {
     // GET SERVER ID FROM PARAMS
     const serverId = req.params["id"];
 
-    // CHECK IF DATA IS ALREADY CASHED
-    const cashedCats = await redis.get(`categories:${serverId}`);
+    // CHECK IF DATA IS ALREADY CACHED
+    const cachedCats = await redis.get(`categories:${serverId}`);
 
-    // IF DATA IS CASHED, RETURN CASHE
-    if (cashedCats) {
-      const foundCats = JSON.parse(cashedCats);
+    // IF DATA IS CACHED, RETURN CACHE
+    if (cachedCats) {
+      const foundCats = JSON.parse(cachedCats);
       return res.status(200).json({
         categories: foundCats,
-        cashed: true,
+        caChed: true,
       });
     }
 
@@ -96,7 +96,7 @@ export const getCatsByServer = async (req: Request, res: Response) => {
       include: { chanels: true },
     });
 
-    // CASHE CATS
+    // CACHE CATS
     await redis.set(
       `categories:${serverId}`,
       JSON.stringify(foundCats),

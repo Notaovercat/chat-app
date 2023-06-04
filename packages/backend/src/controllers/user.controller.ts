@@ -12,13 +12,13 @@ export const getUserProfile = async (req: Request, res: Response) => {
     // GET USER ID FROM PARAMS
     const userId = req.params["id"] as string;
 
-    // CHECK IF DATA IS CASHED
-    const cashedProfile = await redis.get(`profile:${userId}`);
+    // CHECK IF DATA IS CACHED
+    const cachedProfile = await redis.get(`profile:${userId}`);
 
-    if (cashedProfile) {
-      // IF DATA IS CASHED, RETURN CASHE
-      const userProfile = JSON.parse(cashedProfile);
-      return res.status(200).json({ user: userProfile, cashed: true });
+    if (cachedProfile) {
+      // IF DATA IS CACHED, RETURN CACHE
+      const userProfile = JSON.parse(cachedProfile);
+      return res.status(200).json({ user: userProfile, cached: true });
     } else {
       // IF IT'S NOT, STORE THE RESULT OF DB QUERY
       const userProfile = await prisma.user.findFirstOrThrow({
@@ -36,7 +36,7 @@ export const getUserProfile = async (req: Request, res: Response) => {
 
       await redis.set(`profile:${userId}`, JSON.stringify(userProfile));
 
-      return res.status(200).json({ user: userProfile, cashed: false });
+      return res.status(200).json({ user: userProfile, cached: false });
     }
   } catch (err) {
     const { errorMessage, code } = errorHandler(err);
