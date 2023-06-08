@@ -56,26 +56,12 @@ REDIS_PORT=6379
 ```
 
 For the frontend, create a .env file in the packages/frontend directory and populate it with the following:
-
-makefile
-Copy code
+```bash
 VITE_API_URL="http://localhost:3333"
-Contributing to Chat App
-To contribute to Chat App, follow these steps:
+```
 
-Fork the repository.
-Create a branch: git checkout -b <branch_name>.
-Make your changes and commit them: git commit -m '<commit_message>'
-Push to the original branch: git push origin <project_name>/<location>
-Create the pull request.
-Alternatively see the GitHub documentation on creating a pull request.
-
-Contact
+## Contact
 If you want to contact me you can reach me at fdgoe@list.ru.
 
-License
+## License
 This project uses the following license: MIT.
-
-Remember to replace <link to your license> with the actual link to your license file if it exists. If you don't have a license file, you may want to create one.
-
-Also, don't forget to update the instructions if there are any specific steps required for your project.
