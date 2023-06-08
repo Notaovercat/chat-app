@@ -1,53 +1,60 @@
-Chat App
+# Chat App
 This is a chat application built with a Vue 3 Vite PWA frontend and an Express backend. The backend is powered by Prisma ORM with PostgreSQL and uses Redis for caching. Real-time communication is facilitated by Socket.io. Both the frontend and backend are written in TypeScript.
 
-Structure
+# Structure
 The project is structured as a yarn monorepo, with the frontend and backend located in packages/frontend and packages/backend respectively.
 
-Prerequisites
+# Prerequisites
 Before you begin, ensure you have met the following requirements:
 
 You have installed Node.js and Yarn
 You have a Unix-based terminal ready for command line operations (Linux, Mac, or WSL on Windows)
 You have Docker installed to setup the database and caching services
-Installing Chat App
+
+# Installing Chat App
 To install the application, follow these steps:
 
 Clone the repository
-bash
-Copy code
+```bash
 git clone https://github.com/Notaovercat/chat-app.git
+```
+
 Install dependencies
-Copy code
+```bash
 yarn install
+```
+
 Using Chat App
 To use the chat app, follow these steps:
 
 Start the database and caching services:
-Copy code
+```bash
 docker-compose up -d
+```
 Run the development servers:
-less
-Copy code
+```bash
 yarn dev:all
-To build the applications for production, you can use:
+```
 
-less
-Copy code
+To build the applications for production, you can use:
+```bash
 yarn build:all
-Configuration
+```
+
+# Configuration
 The backend and frontend applications use environment variables for configuration.
 
 For the backend, create a .env file in the packages/backend directory and populate it with the following:
 
-makefile
-Copy code
+```bash
 DATABASE_URL="postgresql://postgres:postgres@localhost:5433/postgres?schema=public"
 CORS_ORIGIN="http://localhost:3000"
 JWT_SECRET="secret_shhh"
 PORT=3333
 REDIS_HOST="localhost"
 REDIS_PORT=6379
+```
+
 For the frontend, create a .env file in the packages/frontend directory and populate it with the following:
 
 makefile
