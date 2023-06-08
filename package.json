@@ -17,7 +17,7 @@
     "build:back": "yarn workspace backend build",
     "build:front": "yarn workspace frontend build",
     "start:back": "yarn workspace backend serve -s dist",
-    "start:front": "serve -s packages/frontend/dist",
+    "start:front": "yarn workspace frontend build && serve -s packages/frontend/dist",
     "prisma:studio": "yarn workspace backend prisma studio",
     "prisma:migrate": "yarn workspace backend prisma migrate dev"
   },
