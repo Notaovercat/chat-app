@@ -163,7 +163,7 @@ export const getJoinedServers = async (req: Request, res: Response) => {
       {}
     );
 
-    // CAcHE THE RESULT OF THE QUERY
+    // CACHE THE RESULT OF THE QUERY
     await redis.set(
       `joinedServers:${userId}`,
       JSON.stringify(servers),
