@@ -31,7 +31,7 @@ export const createChan = async (req: Request, res: Response) => {
       },
     });
 
-    // CLEAR CASHE
+    // CLEAR CACHE
     await redis.del(`categories:${category.serverId}`);
 
     return res.status(201).json({

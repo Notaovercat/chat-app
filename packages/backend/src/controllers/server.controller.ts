@@ -54,7 +54,7 @@ export const createServer = async (req: Request, res: Response) => {
       },
     });
 
-    // CLEAR CASHED SERVERS
+    // CLEAR CACHED SERVERS
     await redis.del(`joinedServers:${userId}`);
 
     // SEND SUCCESSFUL STATUS
@@ -98,7 +98,7 @@ export const joinToServer = async (req: Request, res: Response) => {
     // CREATE AN INSTANCE OF REDIS CLIENT
     const redis = RedisService.getClient();
 
-    // CLEAR CASHED SERVERS
+    // CLEAR CACHED SERVERS
     await redis.del(`joinedServers:${userId}`);
 
     // FIND SERVER
@@ -117,7 +117,7 @@ export const joinToServer = async (req: Request, res: Response) => {
       },
     });
 
-    // CLEAR CASHE OF SERVER MEMBERS
+    // CLEAR CACHE OF SERVER MEMBERS
     await redis.del(`members:${server.id}`);
 
     return res
@@ -138,12 +138,12 @@ export const getJoinedServers = async (req: Request, res: Response) => {
     // GET USER ID FROM AUTH HEADER
     const userId = req.user.id;
 
-    const cashedServers = await redis.get(`joinedServers:${userId}`);
+    const cachedServers = await redis.get(`joinedServers:${userId}`);
 
-    if (cashedServers) {
-      // IF DATA IS CASHED, RETURN CASHE
-      const servers = JSON.parse(cashedServers);
-      return res.status(200).json({ servers, cashed: true });
+    if (cachedServers) {
+      // IF DATA IS CACHED, RETURN CACHE
+      const servers = JSON.parse(cachedServers);
+      return res.status(200).json({ servers, cached: true });
     }
 
     // MAKE A QUERY
@@ -163,7 +163,7 @@ export const getJoinedServers = async (req: Request, res: Response) => {
       {}
     );
 
-    // CASHE THE RESULT OF THE QUERY
+    // CACHE THE RESULT OF THE QUERY
     await redis.set(
       `joinedServers:${userId}`,
       JSON.stringify(servers),
@@ -173,7 +173,7 @@ export const getJoinedServers = async (req: Request, res: Response) => {
     );
     return res.status(200).json({
       servers,
-      cashed: false,
+      cached: false,
     });
   } catch (err) {
     const { errorMessage, code } = errorHandler(err);
@@ -204,7 +204,7 @@ export const getMembers = async (req: Request, res: Response) => {
     const joinedUsers = usersJoined.map((join) => join.user);
 
     // SEND DATA
-    return res.status(200).json({ members: joinedUsers, cashe: false });
+    return res.status(200).json({ members: joinedUsers, cache: false });
   } catch (err) {
     const { errorMessage, code } = errorHandler(err);
     return res.status(code).json({ message: errorMessage });
