@@ -1,12 +1,4 @@
-import { emit } from "process";
-import webpush from "web-push";
-
-// export const subscribe = async () => {
-//   const payload = JSON.stringify({ title: "Test" });
-//   const
-
-//   webpush.setVapidDetails('mailto:test@test.com', )
-// };
+import webpush, { PushSubscription } from "web-push";
 
 class WebPsuhService {
   private publicKey: string;
@@ -19,7 +11,11 @@ class WebPsuhService {
     webpush.setVapidDetails(this.mailto, this.publicKey, this.privateKey);
   }
 
-  subscribe() {}
+  async subscribe(sub: PushSubscription) {
+    await webpush.sendNotification(sub, "Test").catch((error) => {
+      console.log(error);
+    });
+  }
 }
 
 export default new WebPsuhService();
