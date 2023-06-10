@@ -20,6 +20,7 @@
     "vue": "^3.2.47",
     "vue-router": "^4.1.6",
     "vue3-touch-events": "^4.1.2",
+    "workbox-precaching": "^7.0.0",
     "zod": "^3.21.4"
   },
   "devDependencies": {
