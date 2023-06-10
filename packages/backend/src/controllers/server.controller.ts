@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { PrismaClient, Server, User } from "@prisma/client";
 import { CreateServer, createServerSchema } from "../types/server.type";
 import { errorHandler } from "../utils/errorsHandler";
-import RedisService from "../utils/redis";
+import RedisService from "../utils/redis-service";
 
 const prisma = new PrismaClient();
 

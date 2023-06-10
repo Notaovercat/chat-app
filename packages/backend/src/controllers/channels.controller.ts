@@ -2,7 +2,7 @@ import { Chanel, PrismaClient, User } from "@prisma/client";
 import { Request, Response } from "express";
 import { errorHandler } from "../utils/errorsHandler";
 import { CreateChanel, createChanelSchema } from "../types/channel.type";
-import RedisService from "../utils/redis";
+import RedisService from "../utils/redis-service";
 import { log } from "console";
 const prisma = new PrismaClient();
 
