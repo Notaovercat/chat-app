@@ -67,6 +67,7 @@ const profile: Profile = await profileStore.getUser(userId);
           <!-- AVATAR IMG -->
           <div v-else>
             <img
+              alt="avatar.png"
               @click="avatarStore.showAvatarWindow = true"
               class="inline-block h-[80px] w-[80px] cursor-pointer select-none rounded-lg"
               :src="`${aip_url}/images/${profile.avatarName}`"

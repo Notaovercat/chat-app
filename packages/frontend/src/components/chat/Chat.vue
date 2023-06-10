@@ -185,6 +185,9 @@ watch(
             <!-- AVATAR IMG -->
             <div class="select-none" v-else>
               <img
+                width="60px"
+                height="60px"
+                alt="avatar.png"
                 class="pointer-events-none inline-block h-14 w-14 rounded-full ring-2 ring-white"
                 :src="`${aip_url}/images/${message.createdBy.avatarName}`"
               />

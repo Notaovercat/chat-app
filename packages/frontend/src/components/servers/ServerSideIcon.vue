@@ -27,7 +27,7 @@ const showName = ref(false);
       <img
         v-if="server.iconName"
         :src="`${aip_url}/images/${server.iconName}`"
-        alt="Server Icon"
+        alt="serverIcon.png"
         class="h-full w-full rounded-2xl transition-all ease-in-out hover:rounded-xl hover:shadow-xl"
       />
     </div>
