@@ -8,25 +8,6 @@ self.addEventListener("message", (event) => {
   if (event.data && event.data.type === "SKIP_WAITING") self.skipWaiting();
 });
 
-/*
-self.addEventListener("fetch", (event) => {
-  event.respondWith(
-    fetch(event.request)
-    .then((response) => {
-        // If we get a response from the network, update the cache.
-        caches
-        .open("api-cache")
-        .then((cache) => cache.put(event.request, response.clone()));
-        return response;
-      })
-      .catch(async () => {
-        // If the network request fails, try to return a response from the cache.
-        const cacheResponse = await caches.match(event.request);
-        return cacheResponse || new Response("No response found in cache.");
-      })
-      );
-    });
-    */
 self.addEventListener("fetch", (event) => {
   event.respondWith(
     fetch(event.request)
