@@ -6,8 +6,8 @@ class WebPsuhService {
   private mailto: string = "mailto:test@test.com";
 
   constructor() {
-    this.privateKey = process.env.PRIVATE_KEY as string;
-    this.publicKey = process.env.PUBLIC_KEY as string;
+    this.privateKey = process.env.VAPID_PRIVATE_KEY as string;
+    this.publicKey = process.env.VAPID_PUBLIC_KEY as string;
     webpush.setVapidDetails(this.mailto, this.publicKey, this.privateKey);
   }
 
