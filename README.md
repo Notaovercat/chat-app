@@ -1,5 +1,7 @@
 # Chat App
 
+[![My Skills](https://skillicons.dev/icons?i=ts,nodejs,express,vue,tailwind,redis,prisma)](https://skillicons.dev)
+
 This is a chat application built with a Vue 3 Vite PWA frontend and an Express backend. The backend is powered by Prisma ORM with PostgreSQL and uses Redis for caching. Real-time communication is facilitated by Socket.io. Both the frontend and backend are written in TypeScript.
 
 # Structure
