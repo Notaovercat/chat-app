@@ -2,6 +2,8 @@
   "extends": "@vue/tsconfig/tsconfig.web.json",
   "compilerOptions": {
     "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "ignoreDeprecations": "5.0",
     "baseUrl": ".",
     "paths": {

@@ -18,7 +18,7 @@ function urlBase64ToUint8Array(base64String: string) {
   return outputArray;
 }
 
-onMounted(() => {
+onMounted(async () => {
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.ready.then(function (registration) {
       registration.pushManager
@@ -31,6 +31,7 @@ onMounted(() => {
         .then(function (subscription) {
           // The subscription was successful
           console.log("User is subscribed:", subscription);
+          // await axios.post()
         })
         .catch(function (err) {
           console.log("Failed to subscribe the user: ", err);

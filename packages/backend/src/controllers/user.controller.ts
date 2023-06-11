@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { PrismaClient, User } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { errorHandler } from "../utils/errorsHandler";
 import RedisService from "../utils/redis-service";
 const prisma = new PrismaClient();
