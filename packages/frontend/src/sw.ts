@@ -30,3 +30,15 @@ self.addEventListener("fetch", (event) => {
       })
   );
 });
+
+self.addEventListener("push", function (event) {
+  const payload = event.data ? event.data.text() : "no payload";
+  const data = JSON.parse(payload);
+  const title = data.title;
+  event.waitUntil(
+    self.registration.showNotification(title, {
+      body: data.body,
+      icon: "./iconpng.ico",
+    })
+  );
+});

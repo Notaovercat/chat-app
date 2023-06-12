@@ -5,6 +5,7 @@ import authRouter from "./routers/auth.router";
 import serverRouter from "./routers/server.router";
 import userRouter from "./routers/user.router";
 import chanelRouter from "./routers/chanel.router";
+import notifincationsRouter from "./routers/notifications.router";
 import categoryRouter from "./routers/category.router";
 import passport from "passport";
 import { jwtStrategy } from "./utils/jwtConfig";
@@ -29,5 +30,6 @@ app.use("/servers", serverRouter);
 app.use("/categories", categoryRouter);
 app.use("/user", userRouter);
 app.use("/chanels", chanelRouter);
+app.use("/push", notifincationsRouter);
 
 export default app;
