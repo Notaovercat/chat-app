@@ -6,6 +6,7 @@ import { useProfileStore } from "@/stores/profile";
 import { ref, onMounted } from "vue";
 import CreateServerWindow from "@/components/servers/CreateServerWindow.vue";
 import ChangeAvatar from "@/components/additional/ChangeAvatar.vue";
+import InitPush from "@/components/pwa/InitPush.vue";
 
 const profileStore = useProfileStore();
 const userId = ref("");
@@ -17,6 +18,7 @@ const sideBarStore = useSideBarStore();
 </script>
 
 <template>
+  <InitPush />
   <div class="flex flex-row">
     <div class="fixed bottom-0 left-0 top-0 z-20 min-h-screen">
       <Suspense>
