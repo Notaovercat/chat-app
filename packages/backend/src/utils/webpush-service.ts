@@ -34,18 +34,22 @@ class WebPsuhService {
         },
       });
 
-      const sub: PushSubscription = {
-        endpoint: subscription.endpoint,
-        keys: {
-          auth: subscription.auth,
-          p256dh: subscription.p256dh,
-        },
-      };
+      if (subscription) {
+        const sub: PushSubscription = {
+          endpoint: subscription.endpoint,
+          keys: {
+            auth: subscription.auth,
+            p256dh: subscription.p256dh,
+          },
+        };
 
-      // SEND NOTIFICATION
-      const payload = JSON.stringify(data);
+        // SEND NOTIFICATION
+        const payload = JSON.stringify(data);
 
-      return webpush.sendNotification(sub, payload);
+        return webpush.sendNotification(sub, payload);
+      } else {
+        return;
+      }
     } catch (error) {
       console.log(error);
     }

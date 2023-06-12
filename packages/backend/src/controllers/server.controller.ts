@@ -3,6 +3,7 @@ import { PrismaClient, Server } from "@prisma/client";
 import { CreateServer, createServerSchema } from "../types/server.type";
 import { errorHandler } from "../utils/errorsHandler";
 import RedisService from "../utils/redis-service";
+import WebPushService from "../utils/webpush-service";
 
 const prisma = new PrismaClient();
 
@@ -115,6 +116,13 @@ export const joinToServer = async (req: Request, res: Response) => {
         server: { connect: { id: server.id } },
         user: { connect: { id: userId } },
       },
+    });
+
+    // SEND NOTIFICATION TO THE SERER OWNER
+    const userName = req.user.username;
+    await WebPushService.sendNotification(server.creatorId, {
+      title: "New Member",
+      body: `${userName} has joined`,
     });
 
     // CLEAR CACHE OF SERVER MEMBERS
