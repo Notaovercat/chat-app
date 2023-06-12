@@ -13,6 +13,7 @@ class WebPsuhService {
     webpush.setVapidDetails(this.mailto, this.publicKey, this.privateKey);
   }
 
+  // SUBSCRIBE USER TO A NOTIFICATIONS
   async subscribe(sub: PushSubscription) {
     try {
       return webpush.sendNotification(sub, "Test");
