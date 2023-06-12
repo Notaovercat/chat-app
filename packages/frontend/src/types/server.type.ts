@@ -1,6 +1,4 @@
 import z from "zod";
-import type { Category } from "./category.type";
-import type { User } from "./user.type";
 
 export const createServerSchema = z
   .object({

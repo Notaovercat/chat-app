@@ -1,5 +1,4 @@
 import z from "zod";
-import type { Message } from "./message.type";
 
 export const createChanelSchema = z
   .object({

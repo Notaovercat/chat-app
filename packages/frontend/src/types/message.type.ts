@@ -1,5 +1,4 @@
 import z from "zod";
-import type { User } from "./user.type";
 
 export const createMessageSchema = z
   .object({

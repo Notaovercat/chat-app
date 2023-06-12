@@ -1,5 +1,5 @@
 import type { CreateServerInput, Server } from "@/types/server.type";
-import type { Profile, User } from "@/types/user.type";
+import type { Profile } from "@/types/user.type";
 import axios, { AxiosError } from "axios";
 import { defineStore } from "pinia";
 import { ref, type Ref } from "vue";
