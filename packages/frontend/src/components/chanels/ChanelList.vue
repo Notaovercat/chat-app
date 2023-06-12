@@ -2,7 +2,7 @@
 import { useCatsStore } from "@/stores/categories";
 import { useServerStore } from "@/stores/servers";
 import type { Category } from "@/types/category.type";
-import { ref, watch, type Ref, onMounted, onBeforeMount } from "vue";
+import { ref, watch, type Ref, onBeforeMount } from "vue";
 import { useRoute } from "vue-router";
 import type { Server } from "@/types/server.type";
 import CreateCategory from "@/components/chanels/CreateCategory.vue";
