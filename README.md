@@ -86,11 +86,3 @@ For the frontend, create a .env file in the packages/frontend directory and popu
 ```bash
 VITE_API_URL="http://localhost:3333"
 ```
-
-# Contact
-
-If you want to contact me you can reach me at fdgoe@list.ru.
-
-# License
-
-This project uses the following license: MIT.
