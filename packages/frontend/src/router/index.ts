@@ -6,7 +6,7 @@ import Chat from "@/components/chat/Chat.vue";
 import { jwtGuard } from "./guards/jwtGuard";
 import { memberCheck } from "./guards/memberGuard";
 import { loginGuard } from "./guards/loginGuard";
-
+import Main from "@/components/chat/Main.vue";
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -23,6 +23,13 @@ const router = createRouter({
       beforeEnter: [jwtGuard, memberCheck],
       children: [
         {
+          path: "",
+          name: "main",
+          components: {
+            chat: Main,
+          },
+        },
+        {
           path: "chat/:chatId",
           name: "chat",
           components: {
@@ -31,6 +38,7 @@ const router = createRouter({
         },
       ],
     },
+
     {
       path: "/login",
       name: "login",
