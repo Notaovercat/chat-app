@@ -3,5 +3,11 @@ import type { NavigationGuard } from "vue-router";
 
 export const loginGuard: NavigationGuard = (to, from, next) => {
   const authStore = useAuthStore();
-  !authStore.isLogin() ? next() : next({ name: "home" });
+  const isLoggedIn = authStore.isLogin();
+
+  if (!isLoggedIn) {
+    next();
+  } else {
+    next({ name: "home" });
+  }
 };
