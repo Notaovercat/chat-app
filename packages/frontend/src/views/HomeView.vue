@@ -1,50 +1,54 @@
 <script setup lang="ts">
-import ServerBar from "@/components/servers/ServerBar.vue";
-import { useSideBarStore } from "@/stores/sideBar";
-import Profile from "@/components/additional/Profile.vue";
 import { useProfileStore } from "@/stores/profile";
 import { ref, onMounted } from "vue";
-import CreateServerWindow from "@/components/servers/CreateServerWindow.vue";
-import ChangeAvatar from "@/components/additional/ChangeAvatar.vue";
-import InitPush from "@/components/pwa/InitPush.vue";
-
+import router from "@/router";
+import axios from "axios";
+import type { Server } from "@/types/server.type";
 const profileStore = useProfileStore();
 const userId = ref("");
+import ServerBar from "@/components/servers/ServerBar.vue";
+import Profile from "@/components/additional/Profile.vue";
+import CreateServerWindow from "@/components/servers/CreateServerWindow.vue";
+import ChangeAvatar from "@/components/additional/ChangeAvatar.vue";
 
-onMounted(() => {
-  userId.value = profileStore.getUserId();
+onMounted(async () => {
+  try {
+    userId.value = profileStore.getUserId();
+    const response = await axios.get(
+      `${import.meta.env.VITE_API_URL}/servers/getFirst`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+        },
+      }
+    );
+    const server = response.data.server as Server;
+    if (response.data.server) {
+      router.push({ path: `/server/${server.id}` });
+    }
+  } catch (error) {
+    console.log(error);
+  }
 });
-const sideBarStore = useSideBarStore();
 </script>
 
 <template>
   <InitPush />
   <div class="flex flex-row">
+    <!-- SERVER BAR -->
     <div class="fixed bottom-0 left-0 top-0 z-20 min-h-screen">
       <Suspense>
-        <ServerBar v-if="sideBarStore.showBar" />
+        <ServerBar />
         <template #fallback> Loading... </template>
       </Suspense>
     </div>
-    <div
-      class="fixed bottom-0 left-0 top-0 z-10 ml-[3.6rem] min-h-screen"
-    ></div>
   </div>
-  <div
-    class="mx-auto my-4 flex min-h-[80%] w-full items-center md:ml-[19rem] md:mr-4 md:w-10/12"
-  ></div>
+  <CreateServerWindow />
+  <ChangeAvatar />
 
+  <!-- OTHER WINDOWS -->
   <Suspense>
     <Profile v-if="profileStore.showProfile" :userId="userId" :isUser="true" />
     <template #fallback> Loading... </template>
   </Suspense>
-
-  <CreateServerWindow />
-  <ChangeAvatar />
-  <div
-    class="visible fixed left-3 top-1 z-50 h-11 w-8 cursor-pointer select-none content-center justify-center rounded-md bg-sky-200 text-center md:invisible"
-    @click="sideBarStore.switchSideBar()"
-  >
-    <span class="text-4xl">≡</span>
-  </div>
 </template>

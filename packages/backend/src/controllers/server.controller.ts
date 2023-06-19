@@ -218,3 +218,24 @@ export const getMembers = async (req: Request, res: Response) => {
     return res.status(code).json({ message: errorMessage });
   }
 };
+
+export const getFirst = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user.id;
+
+    const server = await prisma.server.findFirstOrThrow({
+      where: {
+        members: {
+          some: {
+            userId,
+          },
+        },
+      },
+    });
+
+    return res.status(200).json({ server });
+  } catch (err) {
+    const { errorMessage, code } = errorHandler(err);
+    return res.status(code).json({ message: errorMessage });
+  }
+};

@@ -31,8 +31,22 @@ export const useServerStore = defineStore("server", () => {
 
       // LOADING FALSE
       loadingState.value = false;
-
       joinedServers.value = response.data.servers as Server[];
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function getone() {
+    try {
+      const token = localStorage.getItem("jwt");
+      const response = await axios.get(`${apiUrl}/servers/joined`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      return response.data.servers as Server[];
     } catch (error) {
       console.log(error);
     }
@@ -200,5 +214,6 @@ export const useServerStore = defineStore("server", () => {
     joinedServers,
     checkIsUserMember,
     getServerMembers,
+    getone,
   };
 });

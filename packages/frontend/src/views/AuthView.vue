@@ -4,7 +4,7 @@ import Login from "@/components/auth/Login.vue";
 
 <template>
   <div
-    class="flex h-screen flex-col items-center justify-center bg-gradient-to-r from-blue-500 to-blue-950"
+    class="flex h-screen flex-col items-center justify-center bg-gradient-to-r from-blue-100 to-blue-500"
   >
     <Login />
   </div>

@@ -6,6 +6,7 @@ import {
   joinToServer,
   getJoinedServers,
   getMembers,
+  getFirst,
 } from "../controllers/server.controller";
 import { upload } from "../utils/multerConfig";
 
@@ -18,5 +19,6 @@ router.post("/", upload.single("image"), createServer);
 router.get("/joined", getJoinedServers);
 router.post("/join/:joinCode", joinToServer);
 router.get("/members/:serverId", getMembers);
+router.get("/getFirst", getFirst);
 
 export default router;
