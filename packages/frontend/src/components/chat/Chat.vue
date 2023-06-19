@@ -85,6 +85,7 @@ const onDelete = (msgId: string) => {
 onMounted(() => {
   socketStore.joinToChanel(route.params.chatId as string);
   setTimeout(() => scrollToBottom(), 200);
+  setTimeout(() => scrollToBottomFull(), 200);
 });
 
 // WATCH CHAT ID AND JOIN OR LEAVE CHANNEL ACCORDINGLY
@@ -123,6 +124,10 @@ const scrollToBottom = () => {
   }
 };
 
+const scrollToBottomFull = () => {
+  window.scrollTo(0, document.body.scrollHeight);
+};
+
 // FUNCTION TO SCROLL TO HALF BOTTOM
 const scrollToHalfBottom = () => {
   const messageList = messageListRef.value;
@@ -153,7 +158,7 @@ watch(
     <!-- CHAT WINDOW -->
     <div class="w-full flex-grow overflow-y-auto rounded-lg bg-slate-50">
       <div
-        class="-z-10 mb-16 h-[600px] w-full overflow-y-scroll scroll-smooth rounded-lg bg-slate-50 md:-z-0 md:mb-0 md:h-full md:max-h-[880px]"
+        class="-z-10 mb-16 min-h-[600px] w-full overflow-y-scroll scroll-smooth rounded-lg bg-zinc-100 md:-z-0 md:mb-0 md:h-full md:max-h-[880px]"
         ref="messageListRef"
       >
         <ObserverTop @intersect="isTop = $event" />
@@ -195,7 +200,7 @@ watch(
 
             <!-- MESSAGE -->
             <div
-              class="relative ml-3 flex w-full flex-wrap rounded-xl bg-white px-4 py-4 pb-8 text-sm shadow-sm"
+              class="relative ml-3 flex w-full flex-wrap rounded-xl bg-white px-4 py-2 text-sm shadow-none"
               @mouseenter="if (!editMode) hoveredMessage = message.id;"
               @mouseleave="if (!editMode) hoveredMessage = null;"
               @touchstart="

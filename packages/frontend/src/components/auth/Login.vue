@@ -135,7 +135,7 @@ const onSignup = () => {
 
     <div class="m-5 w-[20%]">
       <button
-        class="h-[50px] w-full rounded-xl bg-blue-400 text-lg shadow-xl transition-all duration-300 enabled:hover:bg-blue-950 enabled:hover:text-white disabled:text-white disabled:opacity-50"
+        class="h-[50px] w-full rounded-xl bg-blue-400 text-sm shadow-xl transition-all duration-300 enabled:hover:bg-blue-950 enabled:hover:text-white disabled:text-white disabled:opacity-50"
         @click="onAuth()"
         :disabled="authStore.loadingState"
       >
