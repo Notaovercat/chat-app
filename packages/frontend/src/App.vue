@@ -5,5 +5,6 @@ import ReloadPWA from "@/components/pwa/ReloadPWA.vue";
 
 <template>
   <ReloadPWA />
+
   <RouterView />
 </template>
