@@ -4,16 +4,16 @@
   "description": "",
   "main": "dist/server.js",
   "scripts": {
-    "build": "npx tsc",
+    "build": "pnpm exec tsc",
     "start": "node dist/server.js",
-    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/server.js\""
+    "dev": "concurrently \"pnpm exec tsc --watch\" \"nodemon -q dist/server.js\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^4.16.2",
-    "bcrypt": "^5.1.1",
+    "argon2": "^0.31.2",
     "connect-history-api-fallback": "^2.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

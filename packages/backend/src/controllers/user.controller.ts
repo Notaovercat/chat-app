@@ -6,21 +6,16 @@ const prisma = new PrismaClient();
 
 export const getUserProfile = async (req: Request, res: Response) => {
   try {
-    // CREATE AN INSTANCE OF REDIS CLIENT
     const redis = RedisService.getClient();
 
-    // GET USER ID FROM PARAMS
-    const userId = req.params["id"] as string;
+    const userId = req.params["id"];
 
-    // CHECK IF DATA IS CACHED
     const cachedProfile = await redis.get(`profile:${userId}`);
 
     if (cachedProfile) {
-      // IF DATA IS CACHED, RETURN CACHE
       const userProfile = JSON.parse(cachedProfile);
       return res.status(200).json({ user: userProfile, cached: true });
     } else {
-      // IF IT'S NOT, STORE THE RESULT OF DB QUERY
       const userProfile = await prisma.user.findFirstOrThrow({
         where: { id: userId },
         select: {

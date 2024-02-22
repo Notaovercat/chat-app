@@ -42,16 +42,15 @@ export const handleSubscribe = async (req: Request, res: Response) => {
   }
 };
 
-export const handleNotification = async (req: Request, res: Response) => {
-  try {
-    const userId = req.user.id;
-    await WebPushService.sendNotification(userId, {
-      title: "Test",
-      body: "Test Test",
-    });
-    return res.status(200).json({ status: true });
-  } catch (err) {
-    const { errorMessage, code } = errorHandler(err);
-    return res.status(code).json({ message: errorMessage });
-  }
-};
+// export const handleNotification = async (req: Request, res: Response) => {
+//   try {
+//     await WebPushService.sendNotification(req.user.id, {
+//       title: "Test",
+//       body: "Test Test",
+//     });
+//     return res.status(200).json({ status: true });
+//   } catch (err) {
+//     const { errorMessage, code } = errorHandler(err);
+//     return res.status(code).json({ message: errorMessage });
+//   }
+// };

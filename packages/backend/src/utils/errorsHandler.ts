@@ -42,6 +42,7 @@ export const errorHandler = (
 ): {
   errorMessage: string;
   code: number;
+  
 } => {
   let errorMessage: string;
   let code: number;

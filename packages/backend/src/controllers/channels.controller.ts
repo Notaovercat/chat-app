@@ -14,13 +14,13 @@ export const createChan = async (req: Request, res: Response) => {
     const userId = req.user.id;
     const inputChanel: CreateChanel = createChanelSchema.parse(req.body);
 
-    // Check if user is server owner
+    // CHECK OWNER
     const category = await prisma.category.findFirstOrThrow({
       where: { id: inputChanel.categoryId },
       select: { creatorId: true, serverId: true },
     });
 
-    if (category.creatorId != userId)
+    if (category.creatorId !== userId)
       return res.status(401).json({ message: "User is not an owner" });
 
     const createdChanel = await prisma.chanel.create({

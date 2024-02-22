@@ -15,13 +15,11 @@ const generateRandomCode = (): string => {
   ).join("");
 };
 
-// CREATE SERVER
 export const createServer = async (req: Request, res: Response) => {
   try {
     // CREATE AN INSTANCE OF REDIS CLIENT
     const redis = RedisService.getClient();
 
-    // GET USER FROM REQUEST
     const userId = req.user.id;
 
     // GET SERVER DATA FROM BODY REQUEST
@@ -69,7 +67,6 @@ export const createServer = async (req: Request, res: Response) => {
   }
 };
 
-// GET ONE SERVER BY ID
 export const getServerById = async (req: Request, res: Response) => {
   try {
     const serverId = req.params["id"];
@@ -87,7 +84,6 @@ export const getServerById = async (req: Request, res: Response) => {
   }
 };
 
-// JOIN USER TO A SERVER
 export const joinToServer = async (req: Request, res: Response) => {
   try {
     // GET USER ID FROM AUTH HEADER
@@ -177,7 +173,6 @@ export const getJoinedServers = async (req: Request, res: Response) => {
       JSON.stringify(servers),
       "EX",
       60 * 60 * 3,
-      "NX"
     );
     return res.status(200).json({
       servers,
@@ -192,9 +187,6 @@ export const getJoinedServers = async (req: Request, res: Response) => {
 // GET ARRAY OF MEMBERS OF THE SERVER BY ID
 export const getMembers = async (req: Request, res: Response) => {
   try {
-    // CREATE AN INSTANCE OF REDIS CLIENT
-    // const redis = RedisService.getClient();
-
     // GET SERVER ID FROM PARAMS
     const serverId = req.params["serverId"];
 
