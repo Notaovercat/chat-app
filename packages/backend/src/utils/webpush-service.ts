@@ -8,8 +8,10 @@ class WebPsuhService {
   private prisma = new PrismaClient();
 
   constructor() {
-    this.privateKey = process.env.VAPID_PRIVATE_KEY as string;
-    this.publicKey = process.env.VAPID_PUBLIC_KEY as string;
+    const vapidKeys = webpush.generateVAPIDKeys();
+
+    this.privateKey = vapidKeys.privateKey;
+    this.publicKey = vapidKeys.publicKey;
     webpush.setVapidDetails(this.mailto, this.publicKey, this.privateKey);
   }
 
@@ -27,29 +29,23 @@ class WebPsuhService {
     data: { title: string; body: string }
   ) {
     try {
-      // FIND SUB BY USER ID
       const subscription = await this.prisma.subscription.findFirstOrThrow({
         where: {
           userId,
         },
       });
 
-      if (subscription) {
-        const sub: PushSubscription = {
-          endpoint: subscription.endpoint,
-          keys: {
-            auth: subscription.auth,
-            p256dh: subscription.p256dh,
-          },
-        };
+      if (!subscription) return;
 
-        // SEND NOTIFICATION
-        const payload = JSON.stringify(data);
+      const sub: PushSubscription = {
+        endpoint: subscription.endpoint,
+        keys: {
+          auth: subscription.auth,
+          p256dh: subscription.p256dh,
+        },
+      };
 
-        return webpush.sendNotification(sub, payload);
-      } else {
-        return;
-      }
+      return webpush.sendNotification(sub, JSON.stringify(data));
     } catch (error) {
       console.log(error);
     }

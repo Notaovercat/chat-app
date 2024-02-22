@@ -10,16 +10,16 @@
     "packages/*"
   ],
   "scripts": {
-    "dev:back": "yarn workspace backend dev",
-    "dev:front": "yarn workspace frontend dev",
-    "build:back": "yarn workspace backend build",
-    "build:front": "yarn workspace frontend build",
-    "start:back": "yarn workspace backend node dist/server.js",
+    "dev:back": "pnpm --filter backend run dev",
+    "dev:front": "pnpm --filter frontend run dev",
+    "build:back": "pnpm --filter backend run build",
+    "build:front": "pnpm --filter frontend eun build",
+    "start:back": "pnpm --filter backend exec node dist/server.js",
     "start:front": "serve -s packages/frontend/dist",
-    "prisma:studio": "yarn workspace backend prisma studio",
-    "prisma:migrate": "yarn workspace backend prisma migrate dev --name init"
+    "prisma:studio": "pnpm --filter backend exec prisma studio",
+    "prisma:migrate": "pnpm --filter backend exec prisma migrate dev --name init"
   },
   "devDependencies": {
-    "serve": "^14.2.0"
+    "serve": "^14.2.1"
   }
 }
