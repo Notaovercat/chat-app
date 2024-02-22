@@ -6,7 +6,7 @@ This is a chat application built with a Vue 3 Vite PWA frontend and an Express b
 
 # Structure
 
-The project is structured as a yarn monorepo, with the frontend and backend located in packages/frontend and packages/backend respectively.
+The project is structured as a pnpm run monorepo, with the frontend and backend located in packages/frontend and packages/backend respectively.
 
 # Prerequisites
 
@@ -29,7 +29,7 @@ git clone https://github.com/Notaovercat/chat-app.git
 Install dependencies
 
 ```bash
-yarn install
+pnpm install
 ```
 
 # Using Chat App
@@ -45,25 +45,25 @@ docker-compose up -d
 Run the development servers:
 
 ```bash
-yarn dev:all
+pnpm run dev:all
 ```
 
 To build the applications for production, you can use:
 
 ```bash
-yarn build:all
+pnpm run build:all
 ```
 
 To start backend server, you can use:
 
 ```bash
-yarn start:back
+pnpm run start:back
 ```
 
 To start frontend server, you can use:
 
 ```bash
-yarn start:front
+pnpm run start:front
 ```
 
 # Configuration
@@ -75,7 +75,7 @@ For the backend, create a .env file in the packages/backend directory and popula
 ```bash
 DATABASE_URL="postgresql://postgres:postgres@localhost:5433/postgres?schema=public"
 CORS_ORIGIN="http://localhost:3000"
-JWT_SECRET="secret_shhh"
+JWT_SECRET="your_secret_word"
 PORT=3333
 REDIS_HOST="localhost"
 REDIS_PORT=6379
