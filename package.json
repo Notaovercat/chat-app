@@ -17,7 +17,9 @@
     "start:back": "pnpm --filter backend exec node dist/server.js",
     "start:front": "serve -s packages/frontend/dist",
     "prisma:studio": "pnpm --filter backend exec prisma studio",
-    "prisma:migrate": "pnpm --filter backend exec prisma migrate dev --name init"
+    "prisma:generate": "pnpm --filter backend exec prisma generate",
+    "prisma:migrate": "pnpm --filter backend exec prisma migrate dev --name init",
+    "build:all": "pnpm run build:back && pnpm run build:front"
   },
   "devDependencies": {
     "serve": "^14.2.1"

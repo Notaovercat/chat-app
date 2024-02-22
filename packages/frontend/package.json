@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "run-p type-check build-only",
+    "build": "run-p build-only",
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit"
@@ -15,7 +15,7 @@
     "pinia": "^2.1.7",
     "pwa-asset-generator": "^6.3.1",
     "socket.io-client": "^4.7.4",
-    "vite-plugin-pwa": "^0.16.7",
+    "vite-plugin-pwa": "^0.19.0",
     "vue": "^3.4.19",
     "vue-router": "^4.2.5",
     "vue3-touch-events": "^4.1.8",

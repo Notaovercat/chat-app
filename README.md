@@ -42,6 +42,12 @@ Start the database and caching services:
 docker-compose up -d
 ```
 
+Generate prisma files:
+```bash
+pnpm run prisma:generate
+pnpm run prisma:migrate
+```
+
 Run the development servers:
 
 ```bash
